@@ -31,5 +31,7 @@ class Loader:
                                shuffle=shuffle, num_workers=num_workers)
 
     def get_test_loader(self, batch_size, shuffle=False, num_workers=0):
-        return self.get_valid_loader(batch_size, shuffle, num_workers)
+        test_set = datasets.ImageFolder(root=self.test_dir, transform=transforms.Compose([transforms.ToTensor()]))
+        return data.DataLoader(test_set, batch_size=batch_size,
+                               shuffle=shuffle, num_workers=num_workers)
 
