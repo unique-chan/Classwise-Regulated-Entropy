@@ -26,5 +26,6 @@ if __name__ == '__main__':
         my_trainer.train(my_train_loader, my_args.lr_warmup)
         my_trainer.valid(my_valid_loader)
 
+    # Test
     if my_args.test:
         my_trainer.test(my_test_loader)
