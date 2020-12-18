@@ -9,6 +9,11 @@ class Loader:
         self.train_dir = os.path.join(dataset_path, 'train')
         self.valid_dir = os.path.join(dataset_path, 'valid')
         self.test_dir = os.path.join(dataset_path, 'test')
+        self.num_classes = Loader.__get_num_classes(self.train_dir)
+
+    @staticmethod
+    def __get_num_classes(root_dir):
+        return len([dir_ for dir_ in os.listdir(root_dir) if not os.path.isfile(dir_)])
 
     @staticmethod
     def __get_train_transform(image_height, image_width):

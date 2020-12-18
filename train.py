@@ -18,14 +18,19 @@ if __name__ == '__main__':
     my_test_loader = my_loader.get_test_loader(my_args.batch_size)
 
     # Model
-    my_model = model.model(my_args.network_name)
+    my_model = model.model(my_args.network_name, my_loader.num_classes, pretrained=False)
 
     # Train and validation
     my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr)
     for cur_epoch in range(0, my_args.epochs):
-        my_trainer.train(my_train_loader, my_args.lr_warmup)
-        my_trainer.valid(my_valid_loader)
+        my_trainer.train(cur_epoch, my_train_loader, my_args.lr_warmup)
+        my_trainer.valid(cur_epoch, my_valid_loader)
 
     # Test
     if my_args.test:
         my_trainer.test(my_test_loader)
+
+    # for debug, remove later!
+    print('train_loss:', my_trainer.train_loss_list)
+    print('valid_loss:', my_trainer.valid_loss_list)
+    print('test_loss:', my_trainer.test_loss_list)
