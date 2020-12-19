@@ -82,7 +82,7 @@ class ProgressBar:
         tot_time = cur_time - ProgressBar.begin_time
         msg_list = list()
         msg_list.append('  Step: %s' % ProgressBar.format_time(step_time))
-        msg_list.append(' | Total Time: %s' % ProgressBar.format_time(tot_time))
+        msg_list.append(' | Time: %s' % ProgressBar.format_time(tot_time))
         if msg:
             msg_list.append(' | ' + msg)
         msg = ''.join(msg_list)
@@ -93,33 +93,4 @@ class ProgressBar:
         else:
             print('', end='\n')
 
-    # def progress_bar(front_msg, epoch_num, current_batch_idx, batch_size, msg=None):
-    #     if current_batch_idx == 0:
-    #         ProgressBar.last_time = time.time()
-    #         ProgressBar.begin_time = ProgressBar.last_time
-    #     cur_len = int(ProgressBar.TOTAL_BAR_LENGTH * current_batch_idx / batch_size)
-    #     rest_len = int(ProgressBar.TOTAL_BAR_LENGTH - cur_len) - 1
-    #     sys.stdout.write('%s | Epoch: %5d [' % (front_msg, epoch_num))
-    #     for i in range(cur_len):
-    #         sys.stdout.write('■')
-    #     sys.stdout.write('▶')
-    #     for i in range(rest_len):
-    #         sys.stdout.write(' ')
-    #     sys.stdout.write(']')
-    #     cur_time = time.time()
-    #     step_time = cur_time - ProgressBar.last_time
-    #     ProgressBar.last_time = cur_time
-    #     tot_time = cur_time - ProgressBar.begin_time
-    #     msg_list = list()
-    #     msg_list.append('  Step: %s' % ProgressBar.format_time(step_time))
-    #     msg_list.append(' | Total Time: %s' % ProgressBar.format_time(tot_time))
-    #     if msg:
-    #         msg_list.append(' | ' + msg)
-    #     msg = ''.join(msg_list)
-    #     sys.stdout.write(msg)
-    #     sys.stdout.write(' | Batch: %d/%d ' % (current_batch_idx + 1, batch_size))
-    #     if current_batch_idx < batch_size - 1:
-    #         sys.stdout.write('\r')
-    #     else:
-    #         sys.stdout.write('\n')
-    #     sys.stdout.flush()
+

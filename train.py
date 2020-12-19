@@ -21,7 +21,7 @@ if __name__ == '__main__':
     my_model = model.model(my_args.network_name, my_loader.num_classes, pretrained=False)
 
     # Train and validation
-    my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr)
+    my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes, my_args.loss_func)
     for cur_epoch in range(0, my_args.epochs):
         my_trainer.train(cur_epoch, my_train_loader, my_args.lr_warmup)
         my_trainer.valid(cur_epoch, my_valid_loader)
@@ -33,4 +33,8 @@ if __name__ == '__main__':
     # for debug, remove later!
     print('train_loss:', my_trainer.train_loss_list)
     print('valid_loss:', my_trainer.valid_loss_list)
-    print('test_loss:', my_trainer.test_loss_list)
+    print('test_loss:', my_trainer.test_loss)
+
+    print('train_acc:', my_trainer.train_top1_acc_list)
+    print('valid_acc:', my_trainer.valid_top1_acc_list)
+    print('test_acc:', my_trainer.test_top1_acc)

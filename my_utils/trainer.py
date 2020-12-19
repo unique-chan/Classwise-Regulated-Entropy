@@ -2,7 +2,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 import torch.optim as optim
 from torch import cuda, isinf, no_grad
 import torch.nn as nn
-from my_criterion import self_regularized_entropy
+from my_criterion import complement_entropy, self_regularized_entropy
 from my_utils import util
 
 
@@ -18,18 +18,22 @@ class WarmUpLR(_LRScheduler):
 class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
-    def __init__(self, model, loader, lr, warmup_epochs=5):
+    def __init__(self, model, loader, lr, num_classes, loss_function, warmup_epochs=5):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.model.to(self.device)
         # loss
-        self.train_loss_list, self.valid_loss_list, self.test_loss_list = [], [], []
+        self.loss_function = loss_function
+        self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
         # loss function
         self.cross_entropy = nn.CrossEntropyLoss()
-        self.regularized_entropy = self_regularized_entropy.SelfRegularizedEntropy(4)
+        self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
+        self.self_regularized_entropy = self_regularized_entropy.SelfRegularizedEntropy(num_classes)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
+        self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
+        self.train_top5_acc_list, self.valid_top5_acc_list, self.test_top5_acc = [], [], None
 
     def reset_acc_members(self):
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
@@ -42,49 +46,75 @@ class Trainer:
         top5_acc_rate = 100. * (self.top5_correct / self.total)
         return top1_acc_rate, top5_acc_rate
 
+    ### Insert your loss function here! ################################################################
+
+    def select_loss_function(self):
+        return eval('self.' + self.loss_function)
+
+    def ERM(self, outputs, targets):
+        return self.cross_entropy(outputs, targets)
+
+    def COT(self, outputs, targets):
+        return self.cross_entropy(outputs, targets) - self.complement_entropy(outputs, targets)
+
+    def SRE(self, outputs, targets):  # proposed method
+        return self.cross_entropy(outputs, targets) - self.self_regularized_entropy(outputs, targets)
+
+    ####################################################################################################
+
     def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0):
+        ### [] is not that important to training.
         batch_loss = 0
         progress_bar = util.ProgressBar()
+        top1_acc_rate, top5_acc_rate = 0, 0
         for batch_idx, (inputs, targets) in enumerate(loader):
             if lr_warmup:
                 self.warmup_scheduler.step()
             inputs, targets = inputs.to(Trainer.device), targets.to(Trainer.device)
             ### inference
             outputs = self.model(inputs)
-            ### for measuring accuracy
+            ### [for measuring accuracy]
             top1_acc, top5_acc = util.topk_acc(outputs, targets)
             top1_acc_rate, top5_acc_rate = self.measure_acc(top1_acc, top5_acc, num_samples=targets.size(0))
-            ### for back-propagation
+            ### zero_grad
             self.optimizer.zero_grad()
-            loss = self.cross_entropy(outputs, targets)
-            # loss = self.regularized_entropy(outputs, targets)
-            if isinf(loss) and front_msg == 'training':
-                print('[Error] nan loss, stop {}.'.format(front_msg))
+            ### choose loss function (core)
+            loss = self.select_loss_function()(outputs, targets)
+            if isinf(loss) and front_msg == 'Train':
+                print('[Error] nan loss, stop <{}>.'.format(front_msg))
                 exit(1)
+            ### back_propagation
             loss.backward()
+            ### optimization
             self.optimizer.step()
+            ### [loss memo.]
             batch_loss = batch_loss + loss.item()
-            ### progress_bar
+            ### [progress_bar]
             progress_bar.progress_bar(front_msg, cur_epoch + 1, batch_idx, len(loader),
-                                      msg='Loss: %.3f | Acc: [top-1] %.3f%%, [top-5] %.3f%%'
+                                      msg='Loss: %.3f | Acc.: [top1] %.3f%%, [top5] %.3f%%'
                                           % (loss / (batch_idx + 1), top1_acc_rate, top5_acc_rate))
-        return batch_loss / len(loader)
+        return batch_loss / len(loader), top1_acc_rate.item(), top5_acc_rate.item()
 
     def train(self, cur_epoch, loader, lr_warmup):
         self.reset_acc_members()
         self.model.train()
-        train_loss = self.one_epoch(loader, lr_warmup, front_msg='Training', cur_epoch=cur_epoch)
+        train_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup,
+                                                                  front_msg='Train', cur_epoch=cur_epoch)
         self.train_loss_list.append(train_loss)
+        self.train_top1_acc_list.append(top1_acc_rate)
+        self.train_top5_acc_list.append(top5_acc_rate)
 
     def valid(self, cur_epoch, loader):
         self.reset_acc_members()
         self.model.eval()
-        valid_loss = self.one_epoch(loader, lr_warmup=False, front_msg='Validation', cur_epoch=cur_epoch)
+        valid_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup=False,
+                                                                  front_msg='Valid', cur_epoch=cur_epoch)
         self.valid_loss_list.append(valid_loss)
+        self.valid_top1_acc_list.append(top1_acc_rate)
+        self.valid_top5_acc_list.append(top5_acc_rate)
 
     def test(self, loader):
         self.reset_acc_members()
         self.model.eval()
-        test_loss = self.one_epoch(loader, lr_warmup=False, front_msg='Test')
-        self.test_loss_list.append(test_loss)
-
+        self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
+                                                                                lr_warmup=False, front_msg='Test')

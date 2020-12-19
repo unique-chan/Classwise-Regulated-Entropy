@@ -1,1 +1,1 @@
-python3 train.py --network_name='resnet18' --dataset_dir='../chan' --height='899' --width='1920'
+python3 train.py --network_name='resnet18' --dataset_dir='../CIFAR10' --height='32' --width='32'

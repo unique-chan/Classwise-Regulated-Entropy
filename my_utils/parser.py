@@ -13,6 +13,8 @@ class Parser:
         return self.parser.parse_args()
 
     def add_arguments_for_train(self):
+        self.parser.add_argument('--loss_func', default='ERM', type=str,
+                                 help='loss function (default:ERM <cross-entropy>)')
         self.parser.add_argument('--network_name', type=str, help='network name')
         self.parser.add_argument('--dataset_dir', type=str, help='dataset path')
         self.parser.add_argument('--height', default=32, type=int, help='image height (default: 32)')

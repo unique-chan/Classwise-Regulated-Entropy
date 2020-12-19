@@ -3,11 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SelfRegularizedEntropy(nn.Module):
+class ComplementEntropy(nn.Module):
     def __init__(self, num_classes):
         self.classes = num_classes
         self.batch_size = 0
-        super(SelfRegularizedEntropy, self).__init__()
+        super(ComplementEntropy, self).__init__()
 
     def forward(self, yHat, y):
         self.batch_size = len(y)
