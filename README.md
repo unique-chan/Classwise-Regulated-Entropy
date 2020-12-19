@@ -17,7 +17,7 @@ Robust Image Classification via Class-wise Softmax Suppression (PyTorch)
 
 * Self-Regularized Entropy
     - <img src="https://render.githubusercontent.com/render/math?math=S(\hat{y})=-\frac{1}{N}\sum_{i=1}^{N}\sum_{j=1, j \ne g}^{N}R(\hat{y}^{(i)[j]})">
-    - <img src="https://render.githubusercontent.com/render/math?math=R(\hat{y}^{(i)[j]})=\frac{c(\hat{y}^{(i)[j]})}{c(\hat{y}^{(i)[j]})+\hat{y}^{(i)[j]}}log\frac{c(\hat{y}^{(i)[j]})}{c(\hat{y}^{(i)[j]}+\hat{y}^{(i)[j]}})+\frac{\hat{y}^{(i)[j]}}{c(\hat{y}^{(i)[j]})+\hat{y}^{(i)[j]}}log\frac{\hat{y}^{(i)[j]}}{c(\hat{y}^{(i)[j]})+\hat{y}^{(i)[j]}}">
+    - <img src="https://render.githubusercontent.com/render/math?math=R(\hat{y}^{(i)[j]})=\frac{c(\hat{y}^{(i)[j]})}{c(\hat{y}^{(i)[j]})%2B\hat{y}^{(i)[j]}}log\frac{c(\hat{y}^{(i)[j]})}{c(\hat{y}^{(i)[j]}%2B\hat{y}^{(i)[j]}})%2B\frac{\hat{y}^{(i)[j]}}{c(\hat{y}^{(i)[j]})%2B\hat{y}^{(i)[j]}}log\frac{\hat{y}^{(i)[j]}}{c(\hat{y}^{(i)[j]})%2B\hat{y}^{(i)[j]}}">
     where <img src="https://render.githubusercontent.com/render/math?math=c(\hat{y}^{(i)[j]})"> denotes <img src="https://render.githubusercontent.com/render/math?math=\frac{1}{K-1}\hat{y}^{(i)[j]}">.
 
 * Proposed Training Loss Function
