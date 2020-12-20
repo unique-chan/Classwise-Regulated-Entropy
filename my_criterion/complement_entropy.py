@@ -12,8 +12,7 @@ class ComplementEntropy(nn.Module):
     def forward(self, yHat, y):
         self.batch_size = len(y)
         yHat = F.softmax(yHat, dim=1)
-
-        Yg = torch.gather(yHat, 1, torch.unsqueeze(y, 1))
+        Yg = yHat.gather(dim=1, index=torch.unsqueeze(y, 1))
         Yg_ = (1 - Yg) + 1e-7   # numerical trick
         Px = yHat / Yg_.view(len(yHat), 1)
         Px_log = torch.log(Px + 1e-10)

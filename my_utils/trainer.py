@@ -24,9 +24,10 @@ class Trainer:
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.model.to(self.device)
         # loss
-        self.loss_function = loss_function
         self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
-        # loss function
+        # my loss list
+        self.loss_function = loss_function
+        print('loss func.:', loss_function)
         self.cross_entropy = nn.CrossEntropyLoss()
         self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
         self.self_regularized_entropy = self_regularized_entropy.SelfRegularizedEntropy(num_classes)
@@ -79,7 +80,11 @@ class Trainer:
             ### zero_grad
             self.optimizer.zero_grad()
             ### choose loss function (core)
-            loss = self.select_loss_function()(outputs, targets)
+            if front_msg == 'Train':
+                loss = self.select_loss_function()(outputs, targets)
+            else:
+                loss = self.ERM(outputs, targets)
+            # [if loss is inf...]
             if isinf(loss) and front_msg == 'Train':
                 print('[Error] nan loss, stop <{}>.'.format(front_msg))
                 exit(1)
