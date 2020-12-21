@@ -5,7 +5,7 @@ if __name__ == '__main__':
     filterwarnings('ignore')
 
     # Random Seeds For Reproducibility
-    util.fix_random_seed()
+    # util.fix_random_seed()
 
     # Parser
     my_parser = parser.Parser(mode='train')
@@ -23,6 +23,9 @@ if __name__ == '__main__':
     # Train and validation
     my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes, my_args.loss_func)
     for cur_epoch in range(0, my_args.epochs):
+        if cur_epoch == 5:
+            my_args.lr_warmup = False
+
         my_trainer.train(cur_epoch, my_train_loader, my_args.lr_warmup)
         my_trainer.valid(cur_epoch, my_valid_loader)
 

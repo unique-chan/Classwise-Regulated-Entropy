@@ -21,7 +21,9 @@ class Trainer:
 
     def __init__(self, model, loader, lr, num_classes, loss_function, warmup_epochs=5):
         self.model = model
-        self.optimizer = optim.SGD(model.parameters(), lr=lr)
+        #     def __init__(self, params, lr=required, momentum=0, dampening=0,
+        #                  weight_decay=0, nesterov=False):
+        self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.model.to(self.device)
         # loss
