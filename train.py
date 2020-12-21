@@ -12,10 +12,11 @@ if __name__ == '__main__':
     my_args = my_parser.parse_args()
 
     # Loader (Train / Valid)
-    my_loader = loader.Loader(my_args.dataset_dir)
-    my_train_loader = my_loader.get_train_loader(my_args.height, my_args.width, my_args.batch_size)
-    my_valid_loader = my_loader.get_valid_loader(my_args.batch_size)
-    my_test_loader = my_loader.get_test_loader(my_args.batch_size)
+    my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width, my_args.batch_size)
+    train_mean, train_std = my_loader.get_train_mean_std()
+    my_train_loader = my_loader.get_train_loader()
+    my_valid_loader = my_loader.get_valid_loader()
+    my_test_loader = my_loader.get_test_loader()
 
     # Model
     my_model = model.model(my_args.network_name, my_loader.num_classes, pretrained=False)
