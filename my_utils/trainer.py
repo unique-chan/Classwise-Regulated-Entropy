@@ -4,6 +4,7 @@ from torch import cuda, isinf, no_grad
 import torch.nn as nn
 from my_criterion import complement_entropy, self_regularized_entropy
 from my_utils import util
+from math import isnan
 
 
 class WarmUpLR(_LRScheduler):
@@ -84,8 +85,8 @@ class Trainer:
                 loss = self.select_loss_function()(outputs, targets)
             else:
                 loss = self.ERM(outputs, targets)
-            # [if loss is inf...]
-            if isinf(loss) and front_msg == 'Train':
+            # [if loss is nan...]
+            if isnan(loss) and front_msg == 'Train':
                 print('[Error] nan loss, stop <{}>.'.format(front_msg))
                 exit(1)
             ### back_propagation
