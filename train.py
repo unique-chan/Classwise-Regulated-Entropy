@@ -13,7 +13,6 @@ if __name__ == '__main__':
 
     # Loader (Train / Valid)
     my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width, my_args.batch_size)
-    train_mean, train_std = my_loader.get_train_mean_std()
     my_train_loader = my_loader.get_train_loader()
     my_valid_loader = my_loader.get_valid_loader()
     my_test_loader = my_loader.get_test_loader()
@@ -21,10 +20,12 @@ if __name__ == '__main__':
     # Model
     my_model = model.model(my_args.network_name, my_loader.num_classes, pretrained=False)
 
-    # Train and validation
-    my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes, my_args.loss_func)
+    # Train and Validation
+    warmup_epochs = 10
+    my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes,
+                                 my_args.loss_func, warmup_epochs)
     for cur_epoch in range(0, my_args.epochs):
-        if cur_epoch == 5:
+        if cur_epoch == warmup_epochs:
             my_args.lr_warmup = False
 
         my_trainer.train(cur_epoch, my_train_loader, my_args.lr_warmup)
@@ -34,11 +35,11 @@ if __name__ == '__main__':
     if my_args.test:
         my_trainer.test(my_test_loader)
 
-    # for debug, remove later!
-    print('train_loss:', my_trainer.train_loss_list)
-    print('valid_loss:', my_trainer.valid_loss_list)
-    print('test_loss:', my_trainer.test_loss)
-
-    print('train_acc:', my_trainer.train_top1_acc_list)
-    print('valid_acc:', my_trainer.valid_top1_acc_list)
-    print('test_acc:', my_trainer.test_top1_acc)
+    # Log
+    # print('train_loss:', my_trainer.train_loss_list)
+    # print('valid_loss:', my_trainer.valid_loss_list)
+    # print('test_loss:', my_trainer.test_loss)
+    #
+    # print('train_acc:', my_trainer.train_top1_acc_list)
+    # print('valid_acc:', my_trainer.valid_top1_acc_list)
+    # print('test_acc:', my_trainer.test_top1_acc)

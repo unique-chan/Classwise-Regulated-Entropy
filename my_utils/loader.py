@@ -3,10 +3,13 @@ import torch
 from torch.utils import data
 from torchvision import datasets
 import torchvision.transforms as transforms
+import pickle
 
 
 class Loader:
+    mean_pkl, std_pkl = 'mean.pkl', 'std.pkl'
     def __init__(self, dataset_path, image_height, image_width, batch_size=128, num_workers=0):
+        self.dataset_path = dataset_path
         self.train_dir = os.path.join(dataset_path, 'train')
         self.valid_dir = os.path.join(dataset_path, 'valid')
         self.test_dir = os.path.join(dataset_path, 'test')
@@ -17,14 +20,27 @@ class Loader:
         self.train_mean, self.train_std = self.get_train_mean_std()
 
     def get_train_mean_std(self):
-        loader = self.get_train_loader_for_mean_std()
-        mean, std = torch.zeros(3), torch.zeros(3)
-        for inputs, targets in loader:
-            for i in range(3):
-                mean[i] += inputs[:, i, :, :].mean()
-                std[i] += inputs[:, i, :, :].std()
-        mean /= len(loader)
-        std /= len(loader)
+        Loader.mean_pkl, Loader.std_pkl = os.path.join(self.dataset_path, Loader.mean_pkl), \
+                                          os.path.join(self.dataset_path, Loader.std_pkl),
+        if os.path.exists(Loader.mean_pkl) and os.path.exists(Loader.std_pkl):
+            with open(Loader.mean_pkl, 'rb') as pkl:
+                mean = pickle.load(pkl)
+            with open(Loader.std_pkl, 'rb') as pkl:
+                std = pickle.load(pkl)
+        else:
+            loader = self.get_train_loader_for_mean_std()
+            mean, std = torch.zeros(3), torch.zeros(3)
+            for inputs, targets in loader:
+                for i in range(3):
+                    mean[i] += inputs[:, i, :, :].mean()
+                    std[i] += inputs[:, i, :, :].std()
+            mean /= len(loader)
+            std /= len(loader)
+            # memo for future use
+            with open(Loader.mean_pkl, 'wb') as pkl:
+                pickle.dump(mean, pkl)
+            with open(Loader.std_pkl, 'wb') as pkl:
+                pickle.dump(std, pkl)
         return mean, std
 
     @staticmethod

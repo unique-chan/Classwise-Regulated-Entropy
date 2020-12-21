@@ -20,7 +20,7 @@ class Parser:
         self.parser.add_argument('--height', default=32, type=int, help='image height (default: 32)')
         self.parser.add_argument('--width', default=32, type=int, help='image height (default: 32)')
         self.parser.add_argument('--lr', default=0.1, type=float,
-                                 help='initial learning rate (default: ERM)')
+                                 help='initial learning rate (default: 0.1)')
         self.parser.add_argument('--epochs', default=5, type=int, help='epochs (default: 5)')
         self.parser.add_argument('--batch_size', default=128, type=int, help='batch_size (default: 128)')
         self.parser.add_argument('--lr_step', default=[30, 50, 80, 100], type=list,
