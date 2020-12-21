@@ -1,4 +1,7 @@
 # I used the well-organized .gitignore file from https://gist.github.com/MOOOWOOO/3cf91616c9f3bbc3d1339adfc707b08a.
+# run.sh
+run.sh
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
