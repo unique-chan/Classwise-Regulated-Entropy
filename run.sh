@@ -1,1 +1,0 @@
-python3 train.py --network_name='resnet18' --dataset_dir='../CIFAR10' --height='32' --width='32' --loss_func='SRE' --epochs=150
