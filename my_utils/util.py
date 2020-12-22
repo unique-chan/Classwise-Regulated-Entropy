@@ -1,7 +1,57 @@
 import time
+import datetime
 from torch import manual_seed, cuda, backends
 import numpy as np
 import random
+import os
+import csv
+
+
+def write_log(my_args, my_trainer):
+    now_time = datetime.datetime.now()
+    now_time = now_time.strftime('%y-%m-%d-%H-%M-%S')
+    new_my_args = parsed_arguments_dict(my_args)
+    log_file = 'logs.csv'
+    fields_name = ['datetime', 'dataset_dir', 'network_name', 'loss_func',
+                   'test_acc_best', 'valid_acc_best', 'train_acc_best',
+                   'epochs', 'lr', 'lr_step', 'lr_step_gamma', 'lr_warmup_epochs',
+                   'mean_std', 'height', 'width', 'batch_size', 'clip',
+                   'train_acc_list', 'valid_acc_list', 'train_loss_list', 'valid_loss_list',
+                   'train_acc_top5_list', 'valid_acc_top5_list']
+    mode = 'a' if os.path.exists(log_file) else 'w'
+
+    with open(log_file, mode, newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fields_name)
+        if mode == 'w':
+            writer.writeheader()
+        del_candidate_keys = list(set(new_my_args.keys()) - set(fields_name))
+        for key in del_candidate_keys:
+            new_my_args.pop(key)
+        # result_dic
+        result_dic = new_my_args
+        for key in result_dic.keys():
+            if type(result_dic[key]) == list:
+                result_dic[key] = str(result_dic[key])
+        result_dic.update({'datetime': now_time,
+                           'train_acc_best': max(my_trainer.train_top1_acc_list),
+                           'valid_acc_best': max(my_trainer.valid_top1_acc_list),
+                           'test_acc_best': max(my_trainer.test_top1_acc_list),
+                           'train_acc_list': str(my_trainer.train_top1_acc_list),
+                           'valid_acc_list': str(my_trainer.valid_top1_acc_list),
+                           'train_loss_list': str(my_trainer.train_loss_list),
+                           'valid_loss_list': str(my_trainer.valid_loss_list),
+                           'train_acc_top5_list': str(my_trainer.train_top5_acc_list),
+                           'valid_acc_top5_list': str(my_trainer.valid_top5_acc_list)})
+        writer.writerow(result_dic)
+
+
+def parsed_arguments_dict(my_args):
+    # my_args = Parser.parse_args()
+    keys = [key for key in dir(my_args) if key[0] != '_']
+    dict = {}
+    for key in keys:
+        dict[key] = eval('my_args.' + str(key))
+    return dict
 
 
 def fix_random_seed(seed=1234):
@@ -92,5 +142,3 @@ class ProgressBar:
             print('', end='\r')
         else:
             print('', end='\n')
-
-

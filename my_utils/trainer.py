@@ -129,5 +129,3 @@ class Trainer:
         self.model.eval()
         self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
                                                                                 lr_warmup=False, front_msg='Test')
-
-nn.utils.cl

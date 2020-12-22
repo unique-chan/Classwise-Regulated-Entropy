@@ -27,8 +27,8 @@ class Parser:
                                  help='learning rate step decay milestones (default: [30, 50, 80, 120])')
         self.parser.add_argument('--lr_step_gamma', default=0.5, type=float,
                                  help='learning rate step decay gamma (default: 0.5)')
-        self.parser.add_argument('--lr_warmup', action='store_true',
-                                 help='initial learning rate warming up')
+        # self.parser.add_argument('--lr_warmup', action='store_true',
+        #                          help='initial learning rate warming up')
         self.parser.add_argument('--lr_warmup_epochs', default=5, type=int,
                                  help='epochs for learning rate warming up (default: 5)')
         self.parser.add_argument('--store', action='store_true',
@@ -39,7 +39,8 @@ class Parser:
                                  help='initially normalize the entire data '
                                       'with the training mean and standard deviation')
         self.parser.add_argument('--clip', default=0, type=float,
-                                 help='gradient clipping constant (default: 0) (0.25 would be a good choice.)')
+                                 help='gradient clipping constant (default: 0) '
+                                      '(0.25 would be a good choice if nan loss occurs.)')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')
