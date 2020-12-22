@@ -22,6 +22,6 @@ class SelfRegularizedEntropy(nn.Module):
         prob_log_yHat_child = torch.log(prob_yHat_child + 1e-10)
         output = (prob_yHat * prob_log_yHat + prob_yHat_child * prob_log_yHat_child) * y_zerohot.cuda()
         loss = float(torch.sum(output))
-        loss /= self.batch_size
-        # loss /= self.classes - 1
+        loss = loss / self.batch_size
+        loss = loss / (self.classes - 1)
         return loss

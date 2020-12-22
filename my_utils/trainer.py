@@ -19,10 +19,8 @@ class WarmUpLR(_LRScheduler):
 class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
-    def __init__(self, model, loader, lr, num_classes, loss_function, warmup_epochs=5):
+    def __init__(self, model, loader, lr, num_classes, loss_function, warmup_epochs=5, clip=0):
         self.model = model
-        #     def __init__(self, params, lr=required, momentum=0, dampening=0,
-        #                  weight_decay=0, nesterov=False):
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.model.to(self.device)
@@ -38,6 +36,8 @@ class Trainer:
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
         self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
         self.train_top5_acc_list, self.valid_top5_acc_list, self.test_top5_acc = [], [], None
+        # gradient clipping constant
+        self.clip = clip
 
     def reset_acc_members(self):
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
@@ -80,19 +80,22 @@ class Trainer:
             ### [for measuring accuracy]
             top1_acc, top5_acc = util.topk_acc(outputs, targets)
             top1_acc_rate, top5_acc_rate = self.measure_acc(top1_acc, top5_acc, num_samples=targets.size(0))
-            ### zero_grad
-            self.optimizer.zero_grad()
             ### choose loss function (core)
             if front_msg == 'Train':
                 loss = self.select_loss_function()(outputs, targets)
             else:
                 loss = self.ERM(outputs, targets)
+            ### zero_grad
+            self.optimizer.zero_grad()
             # [if loss is nan...]
             if isnan(loss) and front_msg == 'Train':
                 print('[Error] nan loss, stop <{}>.'.format(front_msg))
                 exit(1)
             ### back_propagation
             loss.backward()
+            ### gradient clipping
+            if self.clip > 0:
+                nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
             ### optimization
             self.optimizer.step()
             ### [loss memo.]
@@ -126,3 +129,5 @@ class Trainer:
         self.model.eval()
         self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
                                                                                 lr_warmup=False, front_msg='Test')
+
+nn.utils.cl

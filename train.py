@@ -12,7 +12,8 @@ if __name__ == '__main__':
     my_args = my_parser.parse_args()
 
     # Loader (Train / Valid)
-    my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width, my_args.batch_size)
+    my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width,
+                              my_args.batch_size, mean_std=my_args.mean_std)
     my_train_loader = my_loader.get_train_loader()
     my_valid_loader = my_loader.get_valid_loader()
     my_test_loader = my_loader.get_test_loader()
@@ -21,9 +22,9 @@ if __name__ == '__main__':
     my_model = model.model(my_args.network_name, my_loader.num_classes, pretrained=False)
 
     # Train and Validation
-    warmup_epochs = 10
+    warmup_epochs = my_args.lr_warmup_epochs
     my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes,
-                                 my_args.loss_func, warmup_epochs)
+                                 my_args.loss_func, warmup_epochs, my_args.clip)
     for cur_epoch in range(0, my_args.epochs):
         if cur_epoch == warmup_epochs:
             my_args.lr_warmup = False

@@ -8,7 +8,9 @@ import pickle
 
 class Loader:
     mean_pkl, std_pkl = 'mean.pkl', 'std.pkl'
-    def __init__(self, dataset_path, image_height, image_width, batch_size=128, num_workers=0):
+
+    def __init__(self, dataset_path, image_height, image_width, batch_size=128, num_workers=0,
+                 mean_std=True):
         self.dataset_path = dataset_path
         self.train_dir = os.path.join(dataset_path, 'train')
         self.valid_dir = os.path.join(dataset_path, 'valid')
@@ -17,7 +19,9 @@ class Loader:
         self.num_classes = Loader.__get_num_classes(self.train_dir)
         self.image_height, self.image_width = image_height, image_width
         self.batch_size = batch_size
-        self.train_mean, self.train_std = self.get_train_mean_std()
+        self.mean_std = mean_std
+        if mean_std:
+            self.train_mean, self.train_std = self.get_train_mean_std()
 
     def get_train_mean_std(self):
         Loader.mean_pkl, Loader.std_pkl = os.path.join(self.dataset_path, Loader.mean_pkl), \
@@ -47,22 +51,22 @@ class Loader:
     def __get_num_classes(root_dir):
         return len([dir_ for dir_ in os.listdir(root_dir) if not os.path.isfile(dir_)])
 
-    @staticmethod
-    def __get_train_transform(image_height, image_width, mean, std):
+    def get_train_transform(self):
         transforms_list = [
-            transforms.RandomCrop((image_height, image_width), padding=4),
+            transforms.RandomCrop((self.image_height, self.image_width), padding=4),
             transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
-            transforms.Normalize(mean, std)
+            transforms.ToTensor()   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
         ]
+        if self.mean_std:
+            transforms_list.extend([transforms.Normalize(self.train_mean, self.train_std)])
         return transforms.Compose(transforms_list)
 
-    @staticmethod
-    def __get_eval_transform(mean, std):
+    def get_eval_transform(self):
         transforms_list = [
-            transforms.ToTensor(),   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
-            transforms.Normalize(mean, std)
+            transforms.ToTensor()   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
         ]
+        if self.mean_std:
+            transforms_list.extend([transforms.Normalize(self.train_mean, self.train_std)])
         return transforms.Compose(transforms_list)
 
     def get_train_loader_for_mean_std(self):
@@ -71,20 +75,19 @@ class Loader:
                                shuffle=False, num_workers=self.num_workers)
 
     def get_train_loader(self, shuffle=True):
-        composed_transforms_list = Loader.__get_train_transform(self.image_height, self.image_width,
-                                                                self.train_mean, self.train_std)
+        composed_transforms_list = self.get_train_transform()
         train_set = datasets.ImageFolder(root=self.train_dir, transform=composed_transforms_list)
         return data.DataLoader(train_set, batch_size=self.batch_size,
                                shuffle=shuffle, num_workers=self.num_workers)
 
     def get_valid_loader(self, shuffle=False):
         valid_set = datasets.ImageFolder(root=self.valid_dir,
-                                         transform=Loader.__get_eval_transform(self.train_mean, self.train_std))
+                                         transform=self.get_eval_transform())
         return data.DataLoader(valid_set, batch_size=self.batch_size,
                                shuffle=shuffle, num_workers=self.num_workers)
 
     def get_test_loader(self, shuffle=False):
         test_set = datasets.ImageFolder(root=self.test_dir,
-                                        transform=Loader.__get_eval_transform(self.train_mean, self.train_std))
+                                        transform=self.get_eval_transform())
         return data.DataLoader(test_set, batch_size=self.batch_size,
                                shuffle=shuffle, num_workers=self.num_workers)

@@ -23,16 +23,23 @@ class Parser:
                                  help='initial learning rate (default: 0.1)')
         self.parser.add_argument('--epochs', default=5, type=int, help='epochs (default: 5)')
         self.parser.add_argument('--batch_size', default=128, type=int, help='batch_size (default: 128)')
-        self.parser.add_argument('--lr_step', default=[30, 50, 80, 100], type=list,
-                                 help='learning rate step decay milestones (default: [30, 50, 80, 100])')
-        self.parser.add_argument('--lr_step_gamma', default=0.2, type=float,
-                                 help='learning rate step decay gamma (default: 0.2)')
+        self.parser.add_argument('--lr_step', default=[30, 50, 80, 120], type=list,
+                                 help='learning rate step decay milestones (default: [30, 50, 80, 120])')
+        self.parser.add_argument('--lr_step_gamma', default=0.5, type=float,
+                                 help='learning rate step decay gamma (default: 0.5)')
         self.parser.add_argument('--lr_warmup', action='store_true',
-                                 help='initial learning rate warming up for first 5 epochs')
+                                 help='initial learning rate warming up')
+        self.parser.add_argument('--lr_warmup_epochs', default=5, type=int,
+                                 help='epochs for learning rate warming up (default: 5)')
         self.parser.add_argument('--store', action='store_true',
                                  help='store the best trained model')
         self.parser.add_argument('--test', action='store_true',
                                  help='immediately test the model after training is done')
+        self.parser.add_argument('--mean_std', action='store_true',
+                                 help='initially normalize the entire data '
+                                      'with the training mean and standard deviation')
+        self.parser.add_argument('--clip', default=0, type=float,
+                                 help='gradient clipping constant (default: 0) (0.25 would be a good choice.)')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')
