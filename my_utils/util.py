@@ -8,10 +8,16 @@ import csv
 
 
 def write_log(my_args, my_trainer):
-    now_time = datetime.datetime.now()
-    now_time = now_time.strftime('%y-%m-%d-%H-%M-%S')
+    # current time
+    cur_time = datetime.datetime.now()
+    cur_time = cur_time.strftime('%y-%m-%d-%H-%M-%S')
+    # parser-arguments (namespace) -> dictionary
     new_my_args = parsed_arguments_dict(my_args)
-    log_file = 'logs.csv'
+    # make directory (my_logs)
+    dir_name = 'my_logs'
+    os.makedirs(dir_name, exist_ok=True)
+    # csv log_file ->
+    log_file = os.path.join(dir_name, 'logs.csv')
     fields_name = ['datetime', 'dataset_dir', 'network_name', 'loss_func',
                    'test_acc_best', 'valid_acc_best', 'train_acc_best',
                    'epochs', 'lr', 'lr_step', 'lr_step_gamma', 'lr_warmup_epochs',
@@ -19,7 +25,7 @@ def write_log(my_args, my_trainer):
                    'train_acc_list', 'valid_acc_list', 'train_loss_list', 'valid_loss_list',
                    'train_acc_top5_list', 'valid_acc_top5_list']
     mode = 'a' if os.path.exists(log_file) else 'w'
-
+    # csv log_file write/update ->
     with open(log_file, mode, newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fields_name)
         if mode == 'w':
@@ -32,10 +38,10 @@ def write_log(my_args, my_trainer):
         for key in result_dic.keys():
             if type(result_dic[key]) == list:
                 result_dic[key] = str(result_dic[key])
-        result_dic.update({'datetime': now_time,
+        result_dic.update({'datetime': cur_time,
                            'train_acc_best': max(my_trainer.train_top1_acc_list),
                            'valid_acc_best': max(my_trainer.valid_top1_acc_list),
-                           'test_acc_best': max(my_trainer.test_top1_acc_list),
+                           'test_acc_best': my_trainer.test_top1_acc,
                            'train_acc_list': str(my_trainer.train_top1_acc_list),
                            'valid_acc_list': str(my_trainer.valid_top1_acc_list),
                            'train_loss_list': str(my_trainer.train_loss_list),

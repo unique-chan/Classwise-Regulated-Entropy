@@ -11,11 +11,6 @@ if __name__ == '__main__':
     my_parser = parser.Parser(mode='train')
     my_args = my_parser.parse_args()
 
-    print(util.parsed_arguments_dict(my_args).keys())
-    print(util.parsed_arguments_dict(my_args))
-
-    exit(1)
-
     # Loader (Train / Valid)
     my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width,
                               my_args.batch_size, mean_std=my_args.mean_std)
