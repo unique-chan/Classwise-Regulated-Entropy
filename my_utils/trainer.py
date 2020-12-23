@@ -28,7 +28,6 @@ class Trainer:
         self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
         # my loss list
         self.loss_function = loss_function
-        print('loss func.:', loss_function)
         self.cross_entropy = nn.CrossEntropyLoss()
         self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
         self.self_regularized_entropy = self_regularized_entropy.SelfRegularizedEntropy(num_classes)
