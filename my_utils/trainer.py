@@ -103,8 +103,8 @@ class Trainer:
             ### [progress_bar]
             progress_bar.progress_bar(front_msg, cur_epoch + 1, batch_idx, len(loader),
                                       msg='Loss: %.3f | Acc.: [top1] %.3f%%, [top5] %.3f%%'
-                                          % (loss / (batch_idx + 1), top1_acc_rate, top5_acc_rate))
-        return batch_loss / len(loader), top1_acc_rate.item(), top5_acc_rate.item()
+                                          % (loss, top1_acc_rate, top5_acc_rate))
+        return batch_loss, top1_acc_rate.item(), top5_acc_rate.item()
 
     def train(self, cur_epoch, loader, lr_warmup):
         self.reset_acc_members()

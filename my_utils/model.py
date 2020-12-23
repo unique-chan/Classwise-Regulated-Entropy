@@ -1,5 +1,6 @@
 import torchvision.models as models
 import torch.nn as nn
+from my_utils.my_models import resnet_for_tiny as rst
 
 
 def model(network_name, num_classes, pretrained=False):
@@ -14,6 +15,27 @@ def model(network_name, num_classes, pretrained=False):
 # Insert your model function here!
 # Ref.1: https://pytorch.org/docs/stable/torchvision/models.html
 # Ref.2: https://pytorch.org/tutorials/beginner/finetuning_torchvision_models_tutorial.html
+# Ref.3: https://stackoverflow.com/questions/63015883/pytorch-based-resnet18-achieves-low-accuracy-on-cifar100
+
+def resnet18_for_tiny(num_classes, pretrained):
+    return rst.resnet18_for_tiny(num_classes=num_classes)
+
+
+def resnet34_for_tiny(num_classes, pretrained):
+    return rst.resnet34_for_tiny(num_classes=num_classes)
+
+
+def resnet50_for_tiny(num_classes, pretrained):
+    return rst.resnet50_for_tiny(num_classes=num_classes)
+
+
+def resnet101_for_tiny(num_classes, pretrained):
+    return rst.resnet101_for_tiny(num_classes=num_classes)
+
+
+def resnet152_for_tiny(num_classes, pretrained):
+    return rst.resnet152_for_tiny(num_classes=num_classes)
+
 
 def resnet18(num_classes, pretrained):
     net = models.resnet18(pretrained)
