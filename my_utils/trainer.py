@@ -5,6 +5,7 @@ import torch.nn as nn
 from my_criterion import complement_entropy, self_regularized_entropy
 from my_utils import util
 from math import isnan
+import torch
 
 
 class WarmUpLR(_LRScheduler):
@@ -84,19 +85,21 @@ class Trainer:
                 loss = self.select_loss_function()(outputs, targets)
             else:
                 loss = self.ERM(outputs, targets)
-            ### zero_grad
-            self.optimizer.zero_grad()
             # [if loss is nan...]
             if isnan(loss) and front_msg == 'Train':
                 print('[Error] nan loss, stop <{}>.'.format(front_msg))
                 exit(1)
-            ### back_propagation
-            loss.backward()
-            ### gradient clipping
-            if self.clip > 0:
-                nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-            ### optimization
-            self.optimizer.step()
+            ### [for training]
+            if front_msg == 'Train':
+                ### zero_grad
+                self.optimizer.zero_grad()
+                ### back_propagation
+                loss.backward()
+                ### gradient clipping
+                if self.clip > 0:
+                    nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
+                ### optimization
+                self.optimizer.step()
             ### [loss memo.]
             batch_loss = batch_loss + loss.item()
             ### [progress_bar]
@@ -117,14 +120,16 @@ class Trainer:
     def valid(self, cur_epoch, loader):
         self.reset_acc_members()
         self.model.eval()
-        valid_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup=False,
-                                                                  front_msg='Valid', cur_epoch=cur_epoch)
-        self.valid_loss_list.append(valid_loss)
-        self.valid_top1_acc_list.append(top1_acc_rate)
-        self.valid_top5_acc_list.append(top5_acc_rate)
+        with torch.no_grad():
+            valid_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup=False,
+                                                                      front_msg='Valid', cur_epoch=cur_epoch)
+            self.valid_loss_list.append(valid_loss)
+            self.valid_top1_acc_list.append(top1_acc_rate)
+            self.valid_top5_acc_list.append(top5_acc_rate)
 
     def test(self, loader):
         self.reset_acc_members()
         self.model.eval()
-        self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
+        with torch.no_grad():
+            self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
                                                                                 lr_warmup=False, front_msg='Test')
