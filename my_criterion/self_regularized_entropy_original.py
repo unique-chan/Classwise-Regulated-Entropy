@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+# commit test
 class SelfRegularizedEntropy(nn.Module):
     def __init__(self, num_classes):
         self.classes = num_classes
