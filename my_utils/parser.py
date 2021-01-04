@@ -37,8 +37,7 @@ class Parser:
                                  help='initially normalize the entire data '
                                       'with the training mean and standard deviation')
         self.parser.add_argument('--clip', default=0, type=float,
-                                 help='gradient clipping constant (default: 0) '
-                                      '(0.25 would be a good choice if nan loss occurs.)')
+                                 help='gradient clipping constant (default: 0) ')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')
