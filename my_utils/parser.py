@@ -27,8 +27,6 @@ class Parser:
                                  help='learning rate step decay milestones (default: [30, 50, 80, 120])')
         self.parser.add_argument('--lr_step_gamma', default=0.5, type=float,
                                  help='learning rate step decay gamma (default: 0.5)')
-        # self.parser.add_argument('--lr_warmup', action='store_true',
-        #                          help='initial learning rate warming up')
         self.parser.add_argument('--lr_warmup_epochs', default=5, type=int,
                                  help='epochs for learning rate warming up (default: 5)')
         self.parser.add_argument('--store', action='store_true',

@@ -12,8 +12,7 @@ class SelfRegularizedEntropy(nn.Module):
     def forward(self, yHat, y):
         self.batch_size = len(y)
         yHat = F.softmax(yHat, dim=1)
-        yHat_child_pair = torch.ones_like(yHat) * 1e-7
-        # yHat_child_pair = yHat * (1. / (self.classes - 1))
+        yHat_child_pair = yHat * (1. / (self.classes - 1))
         norm = yHat_child_pair + yHat + 1e-7
         y_zerohot = torch.ones(self.batch_size, self.classes).scatter_(
             1, y.view(self.batch_size, 1).data.cpu(), 0)
@@ -24,5 +23,5 @@ class SelfRegularizedEntropy(nn.Module):
         output = (prob_yHat * prob_log_yHat + prob_yHat_child * prob_log_yHat_child) * y_zerohot.cuda()
         loss = float(torch.sum(output))
         loss = loss / self.batch_size
-        # loss = loss / (self.classes - 1)
+        loss = loss / (self.classes - 1)
         return loss
