@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # Loader (Train / Valid)
     my_loader = loader.Loader(my_args.dataset_dir, my_args.height, my_args.width,
-                              my_args.batch_size, mean_std=my_args.mean_std)
+                              my_args.batch_size, mean_std=my_args.mean_std, center_crop_size=my_args.center_crop_size)
     my_train_loader = my_loader.get_train_loader()
     my_valid_loader = my_loader.get_valid_loader()
     my_test_loader = my_loader.get_test_loader()

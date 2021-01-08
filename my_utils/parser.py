@@ -38,6 +38,9 @@ class Parser:
                                       'with the training mean and standard deviation')
         self.parser.add_argument('--clip', default=0, type=float,
                                  help='gradient clipping constant (default: 0) ')
+        self.parser.add_argument('--center_crop_size', default=0, type=int,
+                                 help='central cropping size for validation/test '
+                                      '(default: 0 (No center crop)) (eg. 56 -> 56 x 56 central cropping)')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')
