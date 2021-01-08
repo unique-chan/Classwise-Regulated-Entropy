@@ -23,7 +23,7 @@ def write_log(my_args, my_trainer):
                    'epochs', 'lr', 'lr_step', 'lr_step_gamma', 'lr_warmup_epochs',
                    'mean_std', 'height', 'width', 'batch_size', 'clip',
                    'train_acc_list', 'valid_acc_list', 'train_loss_list', 'valid_loss_list',
-                   'train_acc_top5_list', 'valid_acc_top5_list']
+                   'train_acc_top5_list', 'valid_acc_top5_list', 'center_crop_size']
     mode = 'a' if os.path.exists(log_file) else 'w'
     # csv log_file write/update ->
     with open(log_file, mode, newline='') as csvfile:
