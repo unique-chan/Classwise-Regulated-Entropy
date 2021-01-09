@@ -143,7 +143,7 @@ class ProgressBar:
             msg_list.append(' | ' + msg)
         msg = ''.join(msg_list)
         print(msg, end='')
-        print(' | Batch: %d/%d ' % (current_batch_idx + 1, batch_size), end='')
+        print(' | Batch: %d/%d \t\t' % (current_batch_idx + 1, batch_size), end='')
         if current_batch_idx < batch_size - 1:
             print('', end='\r')
         else:
