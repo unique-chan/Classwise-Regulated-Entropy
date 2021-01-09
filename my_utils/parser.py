@@ -23,10 +23,10 @@ class Parser:
                                  help='initial learning rate (default: 0.1)')
         self.parser.add_argument('--epochs', default=5, type=int, help='epochs (default: 5)')
         self.parser.add_argument('--batch_size', default=128, type=int, help='batch_size (default: 128)')
-        self.parser.add_argument('--lr_step', default=[30, 50, 80, 120], type=list,
-                                 help='learning rate step decay milestones (default: [30, 50, 80, 120])')
-        self.parser.add_argument('--lr_step_gamma', default=0.5, type=float,
-                                 help='learning rate step decay gamma (default: 0.5)')
+        self.parser.add_argument('--lr_step', default=[100, 150], type=list,
+                                 help='learning rate step decay milestones (default: [100, 150])')
+        self.parser.add_argument('--lr_step_gamma', default=0.1, type=float,
+                                 help='learning rate step decay gamma (default: 0.1)')
         self.parser.add_argument('--lr_warmup_epochs', default=5, type=int,
                                  help='epochs for learning rate warming up (default: 5)')
         self.parser.add_argument('--store', action='store_true',
