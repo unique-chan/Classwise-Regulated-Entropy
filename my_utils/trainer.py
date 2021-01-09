@@ -20,8 +20,7 @@ class WarmUpLR(_LRScheduler):
 class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
-    def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma,
-                 warmup_epochs=5, clip=0):
+    def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma, warmup_epochs=5, clip=0):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
