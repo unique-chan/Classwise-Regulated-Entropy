@@ -20,10 +20,12 @@ class WarmUpLR(_LRScheduler):
 class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
-    def __init__(self, model, loader, lr, num_classes, loss_function, warmup_epochs=5, clip=0):
+    def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma,
+                 warmup_epochs=5, clip=0):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
+        self.lr_scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=lr_step, gamma=lr_step_gamma)
         self.model.to(self.device)
         # loss
         self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
@@ -100,6 +102,7 @@ class Trainer:
                     nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
                 ### optimization
                 self.optimizer.step()
+
             ### [loss memo.]
             batch_loss = batch_loss + loss.item()
             ### [progress_bar]
@@ -116,6 +119,9 @@ class Trainer:
         self.train_loss_list.append(train_loss)
         self.train_top1_acc_list.append(top1_acc_rate)
         self.train_top5_acc_list.append(top5_acc_rate)
+
+        ### learning rate decay
+        self.lr_scheduler.step()
 
     def valid(self, cur_epoch, loader):
         self.reset_acc_members()
