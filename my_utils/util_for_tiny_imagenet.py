@@ -3,6 +3,12 @@ import os
 import shutil
 from glob import glob
 
+'''
+[How to use?]
+e.g.
+python3 util_for_tiny_imagenet.py --dir=/home/chan/PycharmProjects/tiny-imagenet-200
+'''
+
 
 '''
 [Quick Overview of this source code]
