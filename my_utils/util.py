@@ -74,7 +74,8 @@ def topk_acc(output, target, topk=(1, 5)):
     _, pred = output.topk(k=maxk, dim=1, largest=True, sorted=True)
     pred = pred.t()
     correct = pred.eq(target.view(1, -1).expand_as(pred))
-    topk_acc_list = [correct[:k].view(-1).float().sum(0, keepdim=True) for k in topk]
+    # topk_acc_list = [correct[:k].view(-1).float().sum(0, keepdim=True) for k in topk]
+    topk_acc_list = [correct[:k].reshape(-1).float().sum(0, keepdim=True) for k in topk]
     return topk_acc_list
 
 
