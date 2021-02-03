@@ -23,7 +23,7 @@ class SelfRegularizedEntropy(nn.Module):
         #     classwise_entropy += (yHat_child / norm) * torch.log((yHat_child / norm) + 1e-10)
         # <=> classwise_entropy += ((yHat_child / norm) * torch.log((yHat_child / norm) + 1e-10)) * self.alpha
         classwise_entropy += ((yHat_child / norm) * torch.log((yHat_child / norm) + 1e-10)) * self.alpha
-        classwise_entropy *= yHat_zerohot
+        classwise_entropy *= yHat_zerohot.cuda()
         entropy = float(torch.sum(classwise_entropy))
         entropy /= batch_size
         # entropy /= (self.classes - 1)
