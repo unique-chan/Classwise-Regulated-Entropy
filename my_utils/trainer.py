@@ -43,10 +43,10 @@ class Trainer:
     def reset_acc_members(self):
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
 
-    def measure_acc(self, top1_acc, top5_acc, num_samples):
+    def measure_acc(self, top1_acc, top5_acc, num_examples):
         self.top1_correct += top1_acc
         self.top5_correct += top5_acc
-        self.total += num_samples
+        self.total += num_examples
         top1_acc_rate = 100. * (self.top1_correct / self.total)
         top5_acc_rate = 100. * (self.top5_correct / self.total)
         return top1_acc_rate, top5_acc_rate
@@ -80,7 +80,7 @@ class Trainer:
             outputs = self.model(inputs)
             ### [for measuring accuracy]
             top1_acc, top5_acc = util.topk_acc(outputs, targets)
-            top1_acc_rate, top5_acc_rate = self.measure_acc(top1_acc, top5_acc, num_samples=targets.size(0))
+            top1_acc_rate, top5_acc_rate = self.measure_acc(top1_acc, top5_acc, num_examples=targets.size(0))
             ### choose loss function (core)
             if front_msg == 'Train':
                 loss = self.select_loss_function()(outputs, targets)
