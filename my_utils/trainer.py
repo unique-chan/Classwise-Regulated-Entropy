@@ -52,20 +52,36 @@ class Trainer:
         return top1_acc_rate, top5_acc_rate
 
     ### Insert your loss function here! ################################################################
+    ### If your loss function has additional hyper-parameters, modify dic_adder()! #####################
 
     def select_loss_function(self):
         return eval('self.' + self.loss_function)
 
-    def ERM(self, outputs, targets):
-        return self.cross_entropy(outputs, targets)
+    def ERM(self, dic):
+        return self.cross_entropy(dic['outputs'], dic['targets'])
 
-    def COT(self, outputs, targets):
-        return self.cross_entropy(outputs, targets) - self.complement_entropy(outputs, targets)
+    def COT(self, dic):
+        return self.cross_entropy(dic['outputs'], dic['targets']) \
+               - self.complement_entropy(dic['outputs'], dic['targets'])
 
-    def SRE(self, outputs, targets):  # proposed method
-        return self.cross_entropy(outputs, targets) - self.self_regularized_entropy(outputs, targets)
+    def SRE(self, dic):  # proposed method
+        return self.cross_entropy(dic['outputs'], dic['targets']) \
+               - dic['lambda1'] * self.self_regularized_entropy(dic['outputs'], dic['targets'])
+
+    def ESRE(self, dic):  # proposed method
+        return self.cross_entropy(dic['outputs'], dic['targets']) \
+               - dic['lambda1'] * self.complement_entropy(dic['outputs'], dic['targets']) \
+               - dic['lambda2'] * self.self_regularized_entropy(dic['outputs'], dic['targets'])
 
     ####################################################################################################
+
+    def dic_adder(self, dic, cur_epoch):
+        # i have to modify this tomorrow!!!!
+        if self.loss_function == 'SRE':
+            dic['lambda1'] = 0
+        if self.loss_function == 'ESRE':
+            dic['lambda1'] = 0
+            dic['lambda2'] = 0
 
     def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0):
         ### [] is not that important to training.
@@ -82,10 +98,12 @@ class Trainer:
             top1_acc, top5_acc = util.topk_acc(outputs, targets)
             top1_acc_rate, top5_acc_rate = self.measure_acc(top1_acc, top5_acc, num_examples=targets.size(0))
             ### choose loss function (core)
+            dic = {'outputs': outputs, 'targets': targets}
             if front_msg == 'Train':
-                loss = self.select_loss_function()(outputs, targets)
+                self.dic_adder(dic, cur_epoch)
+                loss = self.select_loss_function()(dic)
             else:
-                loss = self.ERM(outputs, targets)
+                loss = self.ERM(dic)
             # [if loss is nan...]
             if isnan(loss) and front_msg == 'Train':
                 print('[Error] nan loss, stop <{}>.'.format(front_msg))
