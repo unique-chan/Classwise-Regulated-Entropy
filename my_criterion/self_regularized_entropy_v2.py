@@ -26,5 +26,5 @@ class SelfRegularizedEntropy(nn.Module):
         classwise_entropy *= yHat_zerohot.cuda()
         entropy = float(torch.sum(classwise_entropy))
         entropy /= batch_size
-        # entropy /= (self.classes - 1)
+        entropy /= (self.classes - 1)
         return entropy
