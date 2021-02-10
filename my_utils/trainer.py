@@ -2,9 +2,10 @@ from torch.optim.lr_scheduler import _LRScheduler
 import torch.optim as optim
 from torch import cuda, isinf, no_grad
 import torch.nn as nn
-from my_criterion import complement_entropy, self_regularized_entropy_v2
+from my_criterion import complement_entropy, self_regularized_entropy_v3
 from my_utils import util
 from math import isnan
+from numpy import linspace, exp
 import torch
 
 
@@ -20,7 +21,8 @@ class WarmUpLR(_LRScheduler):
 class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
-    def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma, warmup_epochs=5, clip=0):
+    def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma,
+                 total_epochs, warmup_epochs=5, clip=0):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
@@ -32,13 +34,17 @@ class Trainer:
         self.loss_function = loss_function
         self.cross_entropy = nn.CrossEntropyLoss()
         self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
-        self.self_regularized_entropy = self_regularized_entropy_v2.SelfRegularizedEntropy(num_classes, num_classes)
+        self.self_regularized_entropy = self_regularized_entropy_v3.SelfRegularizedEntropy(num_classes, num_classes)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
         self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
         self.train_top5_acc_list, self.valid_top5_acc_list, self.test_top5_acc = [], [], None
         # gradient clipping constant
         self.clip = clip
+        # sigmoid linspace vector for lambda
+        a = 1
+        self.total_epochs = total_epochs
+        self.sigmoid_linspace = 1 / (1 + exp(- a * linspace(-10, 10, self.total_epochs)))
 
     def reset_acc_members(self):
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
@@ -76,12 +82,11 @@ class Trainer:
     ####################################################################################################
 
     def dic_adder(self, dic, cur_epoch):
-        # i have to modify this tomorrow!!!!
         if self.loss_function == 'SRE':
-            dic['lambda1'] = 0
+            dic['lambda1'] = self.sigmoid_linspace[cur_epoch]
         if self.loss_function == 'ESRE':
-            dic['lambda1'] = 0
-            dic['lambda2'] = 0
+            dic['lambda1'] = self.sigmoid_linspace[(self.total_epochs - 1) - cur_epoch]
+            dic['lambda2'] = self.sigmoid_linspace[cur_epoch]
 
     def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0):
         ### [] is not that important to training.
