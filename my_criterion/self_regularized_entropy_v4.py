@@ -23,7 +23,7 @@ class SelfRegularizedEntropy(nn.Module):
         # e += - K * ( (ψ / norm) log (ψ / norm) )
         classwise_entropy += ((psi_distribution / norm) * torch.log((psi_distribution / norm) + 1e-10)) * self.K
         # e = e ⊙ (yHat + γ) (⊙: Hadamard Product)
-        gamma = 0.5
+        gamma = 0.3
         classwise_entropy *= (yHat + gamma)
         # e = e ⊙ yHat_zerohot (To ignore all ground truth classes)
         classwise_entropy *= yHat_zerohot.cuda()
