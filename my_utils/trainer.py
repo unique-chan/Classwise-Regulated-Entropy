@@ -84,11 +84,12 @@ class Trainer:
     def dic_adder(self, dic, cur_epoch):
         if self.loss_function == 'SRE':
             dic['lambda1'] = self.sigmoid_linspace[cur_epoch]
+
         if self.loss_function == 'ESRE':
             dic['lambda1'] = self.sigmoid_linspace[(self.total_epochs - 1) - cur_epoch]
             dic['lambda2'] = self.sigmoid_linspace[cur_epoch]
 
-    def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0):
+    def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0, progress_bar=False):
         ### [] is not that important to training.
         batch_loss = 0
         progress_bar = util.ProgressBar()
@@ -128,9 +129,10 @@ class Trainer:
             ### [loss memo.]
             batch_loss = batch_loss + loss.item()
             ### [progress_bar]
-            progress_bar.progress_bar(front_msg, cur_epoch + 1, batch_idx, len(loader),
-                                      msg='Loss: %.3f | Acc.: [top1] %.3f%%, [top5] %.3f%%'
-                                          % (loss, top1_acc_rate, top5_acc_rate))
+            if progress_bar:
+                progress_bar.progress_bar(front_msg, cur_epoch + 1, batch_idx, len(loader),
+                                          msg='Loss: %.3f | Acc.: [top1] %.3f%%, [top5] %.3f%%'
+                                              % (loss, top1_acc_rate, top5_acc_rate))
         return batch_loss, top1_acc_rate.item(), top5_acc_rate.item()
 
     def train(self, cur_epoch, loader, lr_warmup):
