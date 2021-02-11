@@ -2,7 +2,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 import torch.optim as optim
 from torch import cuda, isinf, no_grad
 import torch.nn as nn
-from my_criterion import complement_entropy, self_regularized_entropy_v3
+from my_criterion import complement_entropy, self_regularized_entropy_v4
 from my_utils import util
 from math import isnan
 from numpy import linspace, exp
@@ -34,7 +34,7 @@ class Trainer:
         self.loss_function = loss_function
         self.cross_entropy = nn.CrossEntropyLoss()
         self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
-        self.self_regularized_entropy = self_regularized_entropy_v3.SelfRegularizedEntropy(num_classes, num_classes)
+        self.self_regularized_entropy = self_regularized_entropy_v4.SelfRegularizedEntropy(num_classes, num_classes)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
         self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
