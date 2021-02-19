@@ -28,7 +28,8 @@ if __name__ == '__main__':
     warmup_epochs = my_args.lr_warmup_epochs
     my_trainer = trainer.Trainer(my_model, my_train_loader, my_args.lr, my_loader.num_classes,
                                  my_args.loss_func, my_args.lr_step, my_args.lr_step_gamma,
-                                 my_args.epochs, warmup_epochs, my_args.clip)
+                                 my_args.epochs, warmup_epochs, my_args.clip,
+                                 my_args.progress_bar)
     for cur_epoch in range(0, my_args.epochs):
         my_trainer.train(cur_epoch, my_train_loader, lr_warmup=True if cur_epoch < warmup_epochs else False)
         my_trainer.valid(cur_epoch, my_valid_loader)

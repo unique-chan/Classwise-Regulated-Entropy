@@ -43,6 +43,8 @@ class Parser:
                                       '(default: 0 (No center crop)) (eg. 56 -> 56 x 56 central cropping)')
         self.parser.add_argument('--minus_1_to_plus_1_rescale', action='store_true',
                                  help='rescale [0, 1] to [-1, 1] (for each image)')
+        self.parser.add_argument('--progress_bar', action='store_true',
+                                 help='show progress bar for training/valid/test')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')

@@ -22,7 +22,7 @@ class Trainer:
     device = 'cuda' if cuda.is_available() else 'cpu'
 
     def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma,
-                 total_epochs, warmup_epochs=5, clip=0):
+                 total_epochs, warmup_epochs=5, clip=0, progress_bar=False):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
@@ -45,6 +45,8 @@ class Trainer:
         a = 1
         self.total_epochs = total_epochs
         self.sigmoid_linspace = 1 / (1 + exp(- a * linspace(-10, 10, self.total_epochs)))
+        # whether to show progress bar
+        self.on_progress_bar = progress_bar
 
     def reset_acc_members(self):
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
@@ -89,7 +91,7 @@ class Trainer:
             dic['lambda1'] = self.sigmoid_linspace[(self.total_epochs - 1) - cur_epoch]
             dic['lambda2'] = self.sigmoid_linspace[cur_epoch]
 
-    def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0, on_progress_bar=False):
+    def one_epoch(self, loader, lr_warmup, front_msg='', cur_epoch=0):
         ### [] is not that important to training.
         batch_loss = 0
         progress_bar = util.ProgressBar()
@@ -129,7 +131,7 @@ class Trainer:
             ### [loss memo.]
             batch_loss = batch_loss + loss.item()
             ### [progress_bar]
-            if on_progress_bar:
+            if self.on_progress_bar:
                 progress_bar.progress_bar(front_msg, cur_epoch + 1, batch_idx, len(loader),
                                           msg='Loss: %.3f | Acc.: [top1] %.3f%%, [top5] %.3f%%'
                                               % (loss, top1_acc_rate, top5_acc_rate))
