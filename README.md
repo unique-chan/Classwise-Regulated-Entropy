@@ -1,5 +1,5 @@
-# Self-Regularized-Entropy
-Robust Image Classification via Class-wise Softmax Suppression (PyTorch)
+# Classwise-Regulated-Entropy
+Robust Image Classification via Class-wise Output Suppression (PyTorch)
 
 🚧 Do not fork yet. Under construction.
 
