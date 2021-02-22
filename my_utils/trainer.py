@@ -19,14 +19,14 @@ class WarmUpLR(_LRScheduler):
 
 
 class Trainer:
-    device = 'cuda' if cuda.is_available() else 'cpu'
-
     def __init__(self, model, loader, lr, num_classes, loss_function, lr_step, lr_step_gamma,
-                 total_epochs, warmup_epochs=5, clip=0, progress_bar=False):
+                 total_epochs, warmup_epochs=5, clip=0, progress_bar=False, gpu_index=-1):
         self.model = model
         self.optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.lr_scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=lr_step, gamma=lr_step_gamma)
+        self.device = 'cuda:%d' % gpu_index if cuda.is_available() else 'cpu'
+        print('The model is loaded into [{}].'.format(self.device))
         self.model.to(self.device)
         # loss
         self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
@@ -99,7 +99,7 @@ class Trainer:
         for batch_idx, (inputs, targets) in enumerate(loader):
             if lr_warmup:
                 self.warmup_scheduler.step()
-            inputs, targets = inputs.to(Trainer.device), targets.to(Trainer.device)
+            inputs, targets = inputs.to(self.device), targets.to(self.device)
             ### inference
             outputs = self.model(inputs)
             ### [for measuring accuracy]

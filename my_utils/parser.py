@@ -45,6 +45,8 @@ class Parser:
                                  help='rescale [0, 1] to [-1, 1] (for each image)')
         self.parser.add_argument('--progress_bar', action='store_true',
                                  help='show progress bar for training/valid/test')
+        self.parser.add_argument('--gpu_index', default=0, type=int,
+                                 help='[gpu_index = -1]: cpu / [gpu_index = 0]: gpu_0 ...')
 
     def add_arguments_for_test(self):
         self.parser.add_argument('--datetime', type=str, help='datetime')

@@ -62,6 +62,7 @@ class Loader:
         if self.minus_1_to_plus_1_rescale:
             # [0., 1.] -> [-1., 1.]
             transforms_list.extend([transforms.Lambda(lambda x: x * 2. - 1.)])
+
         if self.mean_std:
             transforms_list.extend([transforms.Normalize(self.train_mean, self.train_std)])
         return transforms.Compose(transforms_list)
