@@ -34,6 +34,7 @@ class Loader:
             with open(Loader.std_pkl, 'rb') as pkl:
                 std = pickle.load(pkl)
         else:
+            print('* Hold a sec for calculating mean/std of training examples.')
             loader = self.get_train_loader_for_mean_std()
             mean, std = torch.zeros(3), torch.zeros(3)
             for inputs, targets in loader:

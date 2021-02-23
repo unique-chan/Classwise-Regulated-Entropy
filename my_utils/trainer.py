@@ -2,7 +2,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 import torch.optim as optim
 from torch import cuda, isinf, no_grad
 import torch.nn as nn
-from my_criterion import complement_entropy, self_regularized_entropy_v4
+from my_criterion import CE, CRE
 from my_utils import util
 from math import isnan
 from numpy import linspace, exp
@@ -26,15 +26,15 @@ class Trainer:
         self.warmup_scheduler = WarmUpLR(self.optimizer, len(loader) * warmup_epochs)
         self.lr_scheduler = optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=lr_step, gamma=lr_step_gamma)
         self.device = 'cuda:%d' % gpu_index if cuda.is_available() else 'cpu'
-        print('The model is loaded into [{}].'.format(self.device))
+        print('* The model is loaded into [{}].'.format(self.device))
         self.model.to(self.device)
         # loss
         self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
         # my loss list
         self.loss_function = loss_function
         self.cross_entropy = nn.CrossEntropyLoss()
-        self.complement_entropy = complement_entropy.ComplementEntropy(num_classes)
-        self.self_regularized_entropy = self_regularized_entropy_v4.SelfRegularizedEntropy(num_classes, num_classes)
+        self.complement_entropy = CE.ComplementEntropy(num_classes)
+        self.self_regularized_entropy = CRE.ClasswiseRegulatedEntropy(num_classes, num_classes, self.device)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
         self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
