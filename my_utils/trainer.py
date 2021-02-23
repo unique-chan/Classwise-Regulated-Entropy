@@ -84,10 +84,10 @@ class Trainer:
     ####################################################################################################
 
     def dic_adder(self, dic, cur_epoch):
-        if self.loss_function == 'SRE':
+        if self.loss_function == 'CRE':
             dic['lambda1'] = self.sigmoid_linspace[cur_epoch]
 
-        if self.loss_function == 'ESRE':
+        if self.loss_function == 'ECRE':
             dic['lambda1'] = self.sigmoid_linspace[(self.total_epochs - 1) - cur_epoch]
             dic['lambda2'] = self.sigmoid_linspace[cur_epoch]
 
