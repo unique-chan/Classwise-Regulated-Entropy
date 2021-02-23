@@ -72,11 +72,11 @@ class Trainer:
         return self.cross_entropy(dic['outputs'], dic['targets']) \
                - self.complement_entropy(dic['outputs'], dic['targets'])
 
-    def SRE(self, dic):  # proposed method
+    def CRE(self, dic):  # proposed method
         return self.cross_entropy(dic['outputs'], dic['targets']) \
                - dic['lambda1'] * self.self_regularized_entropy(dic['outputs'], dic['targets'])
 
-    def ESRE(self, dic):  # proposed method
+    def ECRE(self, dic):  # proposed method
         return self.cross_entropy(dic['outputs'], dic['targets']) \
                - dic['lambda1'] * self.complement_entropy(dic['outputs'], dic['targets']) \
                - dic['lambda2'] * self.self_regularized_entropy(dic['outputs'], dic['targets'])
