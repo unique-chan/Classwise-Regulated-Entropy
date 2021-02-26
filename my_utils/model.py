@@ -19,19 +19,19 @@ def model(network_name, num_classes, pretrained=False):
 # Ref.3: https://stackoverflow.com/questions/63015883/pytorch-based-resnet18-achieves-low-accuracy-on-cifar100
 
 
-def ResNeXt29_2x64d(num_classes):
+def ResNeXt29_2x64d(num_classes, pretrained):
     return rsxt.ResNeXt29_2x64d(num_classes=num_classes)
 
 
-def ResNeXt29_4x64d(num_classes):
+def ResNeXt29_4x64d(num_classes, pretrained):
     return rsxt.ResNeXt29_4x64d(num_classes=num_classes)
 
 
-def ResNeXt29_8x64d(num_classes):
+def ResNeXt29_8x64d(num_classes, pretrained):
     return rsxt.ResNeXt29_8x64d(num_classes=num_classes)
 
 
-def ResNeXt29_32x4d(num_classes):
+def ResNeXt29_32x4d(num_classes, pretrained):
     return rsxt.ResNeXt29_32x4d(num_classes=num_classes)
 
 
