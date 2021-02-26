@@ -69,20 +69,20 @@ class ResNeXt(nn.Module):
         return out
 
 
-def ResNeXt29_2x64d():
-    return ResNeXt(num_blocks=[3, 3, 3], cardinality=2, bottleneck_width=64)
+def ResNeXt29_2x64d(**kwargs):
+    return ResNeXt(num_blocks=[3, 3, 3], cardinality=2, bottleneck_width=64, **kwargs)
 
 
-def ResNeXt29_4x64d():
-    return ResNeXt(num_blocks=[3, 3, 3], cardinality=4, bottleneck_width=64)
+def ResNeXt29_4x64d(**kwargs):
+    return ResNeXt(num_blocks=[3, 3, 3], cardinality=4, bottleneck_width=64, **kwargs)
 
 
-def ResNeXt29_8x64d():
-    return ResNeXt(num_blocks=[3, 3, 3], cardinality=8, bottleneck_width=64)
+def ResNeXt29_8x64d(**kwargs):
+    return ResNeXt(num_blocks=[3, 3, 3], cardinality=8, bottleneck_width=64, **kwargs)
 
 
-def ResNeXt29_32x4d():
-    return ResNeXt(num_blocks=[3, 3, 3], cardinality=32, bottleneck_width=4)
+def ResNeXt29_32x4d(**kwargs):
+    return ResNeXt(num_blocks=[3, 3, 3], cardinality=32, bottleneck_width=4, **kwargs)
 
 
 # def test_resnext():
