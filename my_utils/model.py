@@ -92,6 +92,6 @@ def resnext50_32x4d(num_classes, pretrained):
 
 
 def resnext101_32x4d(num_classes, pretrained):
-    net = models.resnext50_32x4d(pretrained)
+    net = models.resnext101_32x8d(pretrained)
     net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
