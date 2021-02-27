@@ -57,30 +57,41 @@ def resnet152_for_tiny(num_classes, pretrained):
 
 def resnet18(num_classes, pretrained):
     net = models.resnet18(pretrained)
-    net.fc = nn.Linear(512, num_classes)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
 
 
 def resnet34(num_classes, pretrained):
     net = models.resnet34(pretrained)
-    net.fc = nn.Linear(512, num_classes)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
 
 
 def resnet50(num_classes, pretrained):
     net = models.resnet50(pretrained)
-    net.fc = nn.Linear(512, num_classes)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
 
 
 def resnet101(num_classes, pretrained):
     net = models.resnet101(pretrained)
-    net.fc = nn.Linear(512, num_classes)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
 
 
 def resnet152(num_classes, pretrained):
     net = models.resnet152(pretrained)
-    net.fc = nn.Linear(512, num_classes)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
     return net
 
+
+def resnext50_32x4d(num_classes, pretrained):
+    net = models.resnext50_32x4d(pretrained)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
+    return net
+
+
+def resnext101_32x4d(num_classes, pretrained):
+    net = models.resnext50_32x4d(pretrained)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
+    return net
