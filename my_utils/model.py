@@ -1,7 +1,7 @@
 import torchvision.models as models
 import torch.nn as nn
 from my_utils.my_models import resnet_for_tiny as rst
-from my_utils.my_models import resnext_for_tiny as rsxt
+# from my_utils.my_models import resnext_for_tiny as rsxt
 
 
 def model(network_name, num_classes, pretrained=False):
@@ -19,20 +19,20 @@ def model(network_name, num_classes, pretrained=False):
 # Ref.3: https://stackoverflow.com/questions/63015883/pytorch-based-resnet18-achieves-low-accuracy-on-cifar100
 
 
-def ResNeXt29_2x64d(num_classes, pretrained):
-    return rsxt.ResNeXt29_2x64d(num_classes=num_classes)
-
-
-def ResNeXt29_4x64d(num_classes, pretrained):
-    return rsxt.ResNeXt29_4x64d(num_classes=num_classes)
-
-
-def ResNeXt29_8x64d(num_classes, pretrained):
-    return rsxt.ResNeXt29_8x64d(num_classes=num_classes)
-
-
-def ResNeXt29_32x4d(num_classes, pretrained):
-    return rsxt.ResNeXt29_32x4d(num_classes=num_classes)
+# def ResNeXt29_2x64d(num_classes, pretrained):
+#     return rsxt.ResNeXt29_2x64d(num_classes=num_classes)
+#
+#
+# def ResNeXt29_4x64d(num_classes, pretrained):
+#     return rsxt.ResNeXt29_4x64d(num_classes=num_classes)
+#
+#
+# def ResNeXt29_8x64d(num_classes, pretrained):
+#     return rsxt.ResNeXt29_8x64d(num_classes=num_classes)
+#
+#
+# def ResNeXt29_32x4d(num_classes, pretrained):
+#     return rsxt.ResNeXt29_32x4d(num_classes=num_classes)
 
 
 def resnet18_for_tiny(num_classes, pretrained):
