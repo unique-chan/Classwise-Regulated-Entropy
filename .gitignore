@@ -4,6 +4,7 @@
 run.sh
 my_logs/
 venv/
+my_dataset/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
