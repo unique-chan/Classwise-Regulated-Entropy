@@ -56,6 +56,7 @@ class Loader:
 
     def get_train_transform(self):
         transforms_list = [
+            transforms.Resize((self.image_height, self.image_width)),
             transforms.RandomCrop((self.image_height, self.image_width), padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor()   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
@@ -70,16 +71,20 @@ class Loader:
 
     def get_eval_transform(self):
         transforms_list = [
+            transforms.Resize((self.image_height, self.image_width)),
             transforms.ToTensor()   # [HxWxC] [0, 255] -> [CxHxW] [0., 1.]
         ]
         if self.center_crop_size > 0:
-            transforms_list.insert(0, transforms.CenterCrop(self.center_crop_size))
+            transforms_list.insert(1, transforms.CenterCrop(self.center_crop_size))
         if self.mean_std:
             transforms_list.extend([transforms.Normalize(self.train_mean, self.train_std)])
         return transforms.Compose(transforms_list)
 
     def get_train_loader_for_mean_std(self):
-        train_set = datasets.ImageFolder(root=self.train_dir, transform=transforms.ToTensor())
+        train_set = datasets.ImageFolder(root=self.train_dir,
+                                         transform=transforms.Compose(
+                                             transforms.Resize((self.image_height, self.image_width)),
+                                             transforms.ToTensor()))
         return data.DataLoader(train_set, batch_size=self.batch_size,
                                shuffle=False, num_workers=self.num_workers)
 
