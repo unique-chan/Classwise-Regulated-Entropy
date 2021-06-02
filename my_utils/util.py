@@ -22,8 +22,9 @@ def write_log(my_args, my_trainer):
                    'test_acc_best', 'valid_acc_best', 'train_acc_best',
                    'epochs', 'lr', 'lr_step', 'lr_step_gamma', 'lr_warmup_epochs',
                    'mean_std', 'height', 'width', 'batch_size', 'clip',
-                   'train_acc_list', 'valid_acc_list', 'train_loss_list', 'valid_loss_list',
-                   'train_acc_top5_list', 'valid_acc_top5_list', 'center_crop_size',
+                   'train_acc_list', 'valid_acc_list', 'test_acc_list',
+                   'train_loss_list', 'valid_loss_list', 'test_loss_list'
+                   'train_acc_top5_list', 'valid_acc_top5_list', 'test_acc_top5_list', 'center_crop_size',
                    'minus_1_to_plus_1_rescale']
     mode = 'a' if os.path.exists(log_file) else 'w'
     # csv log_file write/update ->
@@ -42,11 +43,13 @@ def write_log(my_args, my_trainer):
         result_dic.update({'datetime': cur_time,
                            'train_acc_best': max(my_trainer.train_top1_acc_list),
                            'valid_acc_best': max(my_trainer.valid_top1_acc_list),
-                           'test_acc_best': my_trainer.test_top1_acc,
+                           'test_acc_best': max(my_trainer.test_top1_acc_list),     # new
                            'train_acc_list': str(my_trainer.train_top1_acc_list),
                            'valid_acc_list': str(my_trainer.valid_top1_acc_list),
+                           'test_acc_list': str(my_trainer.test_top1_acc_list),     # new
                            'train_loss_list': str(my_trainer.train_loss_list),
                            'valid_loss_list': str(my_trainer.valid_loss_list),
+                           'test_loss_list': str(my_trainer.test_loss_list),        # new
                            'train_acc_top5_list': str(my_trainer.train_top5_acc_list),
                            'valid_acc_top5_list': str(my_trainer.valid_top5_acc_list)})
         writer.writerow(result_dic)

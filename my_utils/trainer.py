@@ -29,7 +29,7 @@ class Trainer:
         print('* The model is loaded into [{}].'.format(self.device))
         self.model.to(self.device)
         # loss
-        self.train_loss_list, self.valid_loss_list, self.test_loss = [], [], None
+        self.train_loss_list, self.valid_loss_list, self.test_loss_list = [], [], []
         # my loss list
         self.loss_function = loss_function
         self.cross_entropy = nn.CrossEntropyLoss()
@@ -37,8 +37,8 @@ class Trainer:
         self.classwise_regulated_entropy = CRE.ClasswiseRegulatedEntropy(num_classes, self.device)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
-        self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc = [], [], None
-        self.train_top5_acc_list, self.valid_top5_acc_list, self.test_top5_acc = [], [], None
+        self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc_list = [], [], []
+        self.train_top5_acc_list, self.valid_top5_acc_list, self.test_top5_acc_list = [], [], []
         # gradient clipping constant
         self.clip = clip
         # sigmoid linspace vector for lambda
@@ -159,9 +159,12 @@ class Trainer:
             self.valid_top1_acc_list.append(top1_acc_rate)
             self.valid_top5_acc_list.append(top5_acc_rate)
 
-    def test(self, loader):
+    def test(self, cur_epoch, loader):
         self.reset_acc_members()
         self.model.eval()
         with torch.no_grad():
-            self.test_loss, self.test_top1_acc, self.test_top5_acc = self.one_epoch(loader,
-                                                                                lr_warmup=False, front_msg='Test')
+            test_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup=False,
+                                                                     front_msg='Test', cur_epoch=cur_epoch)
+            self.test_top1_acc_list.append(test_loss)
+            self.test_top1_acc_list.append(top1_acc_rate)
+            self.test_top5_acc_list.append(top5_acc_rate)

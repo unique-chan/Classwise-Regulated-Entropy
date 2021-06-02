@@ -33,10 +33,8 @@ if __name__ == '__main__':
     for cur_epoch in range(0, my_args.epochs):
         my_trainer.train(cur_epoch, my_train_loader, lr_warmup=True if cur_epoch < warmup_epochs else False)
         my_trainer.valid(cur_epoch, my_valid_loader)
-
-    # Test
-    if my_args.test:
-        my_trainer.test(my_test_loader)
+        if my_args.test:
+            my_trainer.test(cur_epoch, my_test_loader)
 
     # Log
     util.write_log(my_args, my_trainer)
