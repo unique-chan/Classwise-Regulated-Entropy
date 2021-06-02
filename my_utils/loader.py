@@ -82,9 +82,9 @@ class Loader:
 
     def get_train_loader_for_mean_std(self):
         train_set = datasets.ImageFolder(root=self.train_dir,
-                                         transform=transforms.Compose(
+                                         transform=transforms.Compose([
                                              transforms.Resize((self.image_height, self.image_width)),
-                                             transforms.ToTensor()))
+                                             transforms.ToTensor()]))
         return data.DataLoader(train_set, batch_size=self.batch_size,
                                shuffle=False, num_workers=self.num_workers)
 
