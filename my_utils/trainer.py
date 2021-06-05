@@ -165,6 +165,6 @@ class Trainer:
         with torch.no_grad():
             test_loss, top1_acc_rate, top5_acc_rate = self.one_epoch(loader, lr_warmup=False,
                                                                      front_msg='Test', cur_epoch=cur_epoch)
-            self.test_top1_acc_list.append(test_loss)
+            self.test_loss_list.append(test_loss)
             self.test_top1_acc_list.append(top1_acc_rate)
             self.test_top5_acc_list.append(top5_acc_rate)
