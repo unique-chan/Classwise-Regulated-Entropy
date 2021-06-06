@@ -34,7 +34,7 @@ class Trainer:
         self.loss_function = loss_function
         self.cross_entropy = nn.CrossEntropyLoss()
         self.complement_entropy = CE.ComplementEntropy(self.device)
-        self.classwise_regulated_entropy = CRE.ClasswiseRegulatedEntropy(num_classes, self.device)
+        self.classwise_regulated_entropy = CRE.ClasswiseRegulatedEntropy(num_classes * 2, self.device)
         # accuracy
         self.total, self.top1_correct, self.top5_correct = 0, 0, 0
         self.train_top1_acc_list, self.valid_top1_acc_list, self.test_top1_acc_list = [], [], []
