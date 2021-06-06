@@ -28,12 +28,12 @@ class ClasswiseRegulatedEntropy(nn.Module):
 
         psi_distribution = torch.ones_like(yHat) * self.psi
         yHat_zerohot = torch.ones(batch_size, yHat.shape[1]).scatter_(1, y.view(batch_size, 1).data.cpu(), 0)
-        # yHat_zerohot = torch.ones(batch_size, self.C).scatter_(1, y.view(batch_size, 1).data.cpu(), 0)
+        # yHat_zerohot = torch.ones(batch_size, self.C).scatter_(1, y.view(batch_size, 1).data.cpu(), 0) -> X !!!
         norm = yHat + psi_distribution * self.K + 1e-10
         classwise_entropy = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
         classwise_entropy += ((psi_distribution / norm) * torch.log((psi_distribution / norm) + 1e-10)) * self.K
         gamma = 1e-10
-        # classwise_entropy *= (yHat + gamma)
+        # classwise_entropy *= (yHat + gamma) -> past
         classwise_entropy *= (yHat_max + gamma)
         classwise_entropy *= yHat_zerohot.to(device=self.device)
         entropy = float(torch.sum(classwise_entropy))
