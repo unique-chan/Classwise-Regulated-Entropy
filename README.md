@@ -1,5 +1,5 @@
 # Classwise-Regulated-Entropy (Pytorch)
-**[Yechan Kim](https://github.com/unique-chan)
+**[Yechan Kim](https://github.com/unique-chan)**
 
 [Cite this Paper]() (Preprint.)
 
