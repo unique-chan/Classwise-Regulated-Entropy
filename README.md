@@ -24,7 +24,7 @@ class ClasswiseRegulatedEntropy(nn.Module):
         assert K > 0 and type(K) is int, 'Hyper-parameter "K" should be a integer (> 0).'
         self.K = K                                                   # K
         self.psi = psi                                               # ψ
-        self.device = device                                         # {'cpu', 'cuda:0', 'cuda:1', ...}
+        self.device = device                                         # {'cpu', 'cuda:0', ...}
         super(ClasswiseRegulatedEntropy, self).__init__()
 
    def forward(self, yHat, y):
