@@ -41,8 +41,8 @@ class ClasswiseRegulatedEntropy(nn.Module):
         classwise_entropy = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
         classwise_entropy += ((psi_distribution / norm) * 
                                torch.log((psi_distribution / norm) + 1e-10)) * self.K
+        
         kush = 1e-10
-
         classwise_entropy *= (yHat_max + kush)
         classwise_entropy *= yHat_zerohot.to(device=self.device)
         entropy = float(torch.sum(classwise_entropy))
