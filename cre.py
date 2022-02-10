@@ -3,13 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class ClasswiseRegulatedEntropy(nn.Module):
+class CRE(nn.Module):
     def __init__(self, K, device, psi=1e-7):
         assert K > 0 and type(K) is int, 'Hyper-parameter "K" should be a integer (> 0).'
         self.K = K                                                   # K
         self.psi = psi                                               # ψ
         self.device = device                                         # {'cpu', 'cuda:0', 'cuda:1', ...}
-        super(ClasswiseRegulatedEntropy, self).__init__()
+        super(CRE, self).__init__()
 
     def forward(self, yHat, y):
         # [Pseudo code]
