@@ -51,9 +51,9 @@ class ClasswiseRegulatedEntropy(nn.Module):
         return entropy
 ```
 
-## Script for generating SIFAR (Semantically similar samples from cIFAR-100)
+## Script for generating SIFAR (<u>Semantically</u> similar samples from c<u>IFAR</u>-100)
 * See `sifar.py`
-* You may need to prepare downloaded `CIFAR-100` before executing `sifar.py'. Kindly refer to [cifar2png](https://github.com/knjcode/cifar2png) and run `cifar2png` without superclass option.
+* You may need to prepare downloaded `CIFAR-100` before executing `sifar.py`. Kindly refer to [cifar2png](https://github.com/knjcode/cifar2png) and run `cifar2png` without superclass option.
 
 ## Contribution
 If you find any bugs or have opinions for further improvements, please feel free to create a pull request or contact me (yechankim@gm.gist.ac.kr). All contributions are welcome.
