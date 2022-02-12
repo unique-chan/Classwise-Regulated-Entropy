@@ -10,14 +10,14 @@
 * For simplicity, classification code for visual recognition is provided separately in this [GitHub repo 🖱️](https://github.com/unique-chan/Simple-Image-Classification): you can easily use `Classwise Regulated Entropy` by passing `--loss_function='CRE'` for executing `train.py`. For details, please visit the above repository.
 
 ## Prerequisites
-* See `requirements.txt`
+* See `requirements.txt`.
 ```
 torch
 torchvision
 ```
 
-## Code
-* See `cre.py`
+## Code for the proposed method
+* See `cre.py`.
 * Loss = Cross Entropy - λ * Classwise Regulated Entropy (λ: modulating factor)
 ```python
 class ClasswiseRegulatedEntropy(nn.Module):
@@ -51,8 +51,9 @@ class ClasswiseRegulatedEntropy(nn.Module):
         return entropy
 ```
 
-## Script for generating SIFAR (<u>Semantically</u> similar samples from c<u>IFAR</u>-100)
-* See `sifar.py`
+## Script for generating SIFAR
+* See `sifar.py`.
+* Note that this work abbreviates as SIFAR for '<u>Semantically</u> similar samples from c<u>IFAR</u>-100.'
 * You may need to prepare downloaded `CIFAR-100` before executing `sifar.py`. Kindly refer to [cifar2png](https://github.com/knjcode/cifar2png) and run `cifar2png` without superclass option.
 
 ## Contribution
