@@ -6,17 +6,18 @@
 🚧 Under Construction! (Do not fork already!!!)
 
 ## This repository contains:
-- Classwise Cross Entropy (code) 
-- For simplicity, classification code for visual recognition is provided separately in this [GitHub repo 🖱️](https://github.com/unique-chan/Simple-Image-Classification): you can easily use `Classwise Regulated Entropy` by passing `--loss_function='CRE'` for executing `train.py`. For details, please visit the above repository.
+* Classwise Cross Entropy (code) 
+* For simplicity, classification code for visual recognition is provided separately in this [GitHub repo 🖱️](https://github.com/unique-chan/Simple-Image-Classification): you can easily use `Classwise Regulated Entropy` by passing `--loss_function='CRE'` for executing `train.py`. For details, please visit the above repository.
 
 ## Prerequisites
-* See requirements.txt
+* See `requirements.txt`
 ```
 torch
 torchvision
 ```
 
 ## Code
+* See `cre.py`
 * Loss = Cross Entropy - λ * Classwise Regulated Entropy (λ: modulating factor)
 ```python
 class ClasswiseRegulatedEntropy(nn.Module):
@@ -50,11 +51,14 @@ class ClasswiseRegulatedEntropy(nn.Module):
         return entropy
 ```
 
+## Script for generating SIFAR (Semantically similar samples from cIFAR-100)
+* See `sifar.py`
+* You may need to prepare downloaded `CIFAR-100` before executing `sifar.py'. Kindly refer to [cifar2png](https://github.com/knjcode/cifar2png) and run `cifar2png` without superclass option.
+
 ## Contribution
 If you find any bugs or have opinions for further improvements, please feel free to create a pull request or contact me (yechankim@gm.gist.ac.kr). All contributions are welcome.
 
 ## Reference
 1. Hao-Yun Chen, Pei-Hsin Wang, Chun-Hao Liu, Shih-Chieh Chang, Jia-Yu Pan, Yu-Ting Chen, Wei Wei, and Da-Cheng Juan. Complement objective training. arXiv preprint arXiv:1903.01182, 2019.
-2. https://github.com/calmisential/Basic_CNNs_TensorFlow2
-3. https://github.com/Hsuxu/Loss_ToolBox-PyTorch
-4. https://github.com/weiaicunzai/pytorch-cifar100
+2. https://github.com/weiaicunzai/pytorch-cifar100
+3. https://github.com/knjcode/cifar2png
