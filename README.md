@@ -6,8 +6,8 @@
 🚧 Under Construction! (Do not fork already!!!)
 
 ## This repository contains:
-* Classwise Cross Entropy (code) 
-* For simplicity, classification code for visual recognition is provided separately in this [GitHub repo 🖱️](https://github.com/unique-chan/Simple-Image-Classification): you can easily use `Classwise Regulated Entropy` by passing `--loss_function='CRE'` for executing `train.py`. For details, please visit the above repository.
+* Code for Classwise-Regulated-Entropy (CRE) 
+* For replication, we will soon provide a Pytorch implementation for CIFAR-10 classification with CRE.
 
 ## Prerequisites
 * See `requirements.txt`.
