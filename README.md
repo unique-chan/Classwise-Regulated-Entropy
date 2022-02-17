@@ -44,9 +44,9 @@ class ClasswiseRegulatedEntropy(nn.Module):
         # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
         VP = torch.ones_like(yHat) * self.psi                        # virtual distribution except for yHat
-        norm = yHat + VP * self.K + 1e-10
-        e = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
-        e += ((VP / norm) * torch.log((VP / norm) + 1e-10)) * self.K
+        norm = yHat + VP * self.K
+        e = (yHat / norm) * torch.log((yHat / norm))
+        e += ((VP / norm) * torch.log((VP / norm))) * self.K
 
         # For (iii)
         yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
