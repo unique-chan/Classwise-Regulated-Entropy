@@ -20,15 +20,15 @@ torchvision
 * See `cre.py`.
 * Loss = Cross Entropy - λ * Classwise Regulated Entropy (λ: modulating factor)
 ```python
-class ClasswiseRegulatedEntropy(nn.Module):
+class CRE(nn.Module):
     def __init__(self, K, device, psi=1e-7):
         assert K > 0 and type(K) is int, 'Hyper-parameter "K" should be a integer (> 0).'
         self.K = K                                                   # K
         self.psi = psi                                               # ψ
-        self.device = device                                         # {'cpu', 'cuda:0', ...}
-        super(ClasswiseRegulatedEntropy, self).__init__()
+        self.device = device                                         # {'cpu', 'cuda:0', 'cuda:1', ...}
+        super(CRE, self).__init__()
 
-   def forward(self, yHat, y):
+    def forward(self, yHat, y):
         # [Pseudo code]
         # (i)       e = - (yHat / norm) log (yHat / norm)
         # (ii)      e += - K * ( (ψ / norm) log (ψ / norm) )
@@ -37,16 +37,16 @@ class ClasswiseRegulatedEntropy(nn.Module):
         # (v)       e = scalar_sum(e)
         # (vi)      e = e / N
 
-        kush = 1e-10                                                 # γ
+        kush = 1e-7                                                  # γ
         C = yHat.shape[1]                                            # number of classes
         N = len(y)                                                   # batch size
 
         # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
         VP = torch.ones_like(yHat) * self.psi                        # virtual distribution except for yHat
-        norm = yHat + VP * self.K
-        e = (yHat / norm) * torch.log((yHat / norm))
-        e += ((VP / norm) * torch.log((VP / norm))) * self.K
+        norm = yHat + VP * self.K + kush
+        e = (yHat / norm) * torch.log((yHat / norm) + kush)
+        e += ((VP / norm) * torch.log((VP / norm) + kush)) * self.K
 
         # For (iii)
         yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
