@@ -1,9 +1,9 @@
 # Classwise-Regulated-Entropy (Pytorch)
 **[Yechan Kim](https://github.com/unique-chan)**
 
-[A paper will be uploaded via Arxiv!]()
-
 🚧 Under Construction! (Do not fork already!!!)
+
+[A paper will be uploaded via Arxiv!]()
 
 ## This repository contains:
 * Code for Classwise-Regulated-Entropy (CRE) 
