@@ -28,21 +28,21 @@ class CRE(nn.Module):
         yHat = F.softmax(yHat, dim=1)
         VP = torch.ones_like(yHat) * self.psi                        # VP: virtual distribution except for yHat
         norm = yHat + VP * self.K + 1e-10
-        classwise_entropy = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
-        classwise_entropy += ((VP / norm) * torch.log((VP / norm) + 1e-10)) * self.K
+        e = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
+        e += ((VP / norm) * torch.log((VP / norm) + 1e-10)) * self.K
 
         # For (iii)
         yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
-        classwise_entropy *= yHat_zerohot.to(device=self.device)
-        classwise_entropy = torch.sum(classwise_entropy, dim=1)
+        e *= yHat_zerohot.to(device=self.device)
+        e = torch.sum(e, dim=1)
 
         # For (iv)
         yHat_gt = yHat.data * F.one_hot(y, C)
         yHat_gt = yHat_gt.data.max(dim=1).values
-        classwise_entropy *= (yHat_gt + kush)
-        
-        # For (v), (vi)
-        entropy = float(torch.sum(classwise_entropy))
-        entropy /= N
+        e *= (yHat_gt + kush)
 
-        return entropy
+        # For (v), (vi)
+        e = float(torch.sum(e))
+        e /= N
+
+        return e
