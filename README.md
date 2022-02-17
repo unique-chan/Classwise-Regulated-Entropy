@@ -29,23 +29,39 @@ class ClasswiseRegulatedEntropy(nn.Module):
         super(ClasswiseRegulatedEntropy, self).__init__()
 
    def forward(self, yHat, y):
-        num_classes = yHat.shape[1]                                  # C
-        batch_size = len(y)                                          # N
+        # [Pseudo code]
+        # (i)       e = - (yHat / norm) log (yHat / norm)
+        # (ii)      e += - K * ( (ψ / norm) log (ψ / norm) )
+        # (iii)     e = e ⊙ yHat_zerohot (To ignore all ground truth classes)
+        # (iv)      e = e ⊙ (yHat + γ) (⊙: Hadamard Product)
+        # (v)       e = scalar_sum(e)
+        # (vi)      e = e / N
+
+        kush = 1e-10                                                 # γ
+        C = yHat.shape[1]                                            # number of classes
+        N = len(y)                                                   # batch size
+
+        # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
-        yHat_gt = yHat.data * F.one_hot(y, num_classes)
-
-        psi_distribution = torch.ones_like(yHat) * self.psi
-        yHat_zerohot = torch.ones(batch_size, num_classes).scatter_(1, y.view(batch_size, 1).data.cpu(), 0)
-        norm = yHat + psi_distribution * self.K + 1e-10
+        VP = torch.ones_like(yHat) * self.psi                        # VP: virtual distribution except for yHat
+        norm = yHat + VP * self.K + 1e-10
         classwise_entropy = (yHat / norm) * torch.log((yHat / norm) + 1e-10)
-        classwise_entropy += ((psi_distribution / norm) * torch.log((psi_distribution / norm) + 1e-10)) * self.K
+        classwise_entropy += ((VP / norm) * torch.log((VP / norm) + 1e-10)) * self.K
 
-        kush = 1e-10
-        classwise_entropy *= (yHat_gt + kush)
+        # For (iii)
+        yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
         classwise_entropy *= yHat_zerohot.to(device=self.device)
-        entropy = float(torch.sum(classwise_entropy))
-        entropy /= batch_size
+        classwise_entropy = torch.sum(classwise_entropy, dim=1)
+
+        # For (iv)
+        yHat_gt = yHat.data * F.one_hot(y, C)
+        yHat_gt = yHat_gt.data.max(dim=1).values
+        classwise_entropy *= (yHat_gt + kush)
         
+        # For (v), (vi)
+        entropy = float(torch.sum(classwise_entropy))
+        entropy /= N
+
         return entropy
 ```
 
