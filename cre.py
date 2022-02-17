@@ -20,16 +20,16 @@ class CRE(nn.Module):
         # (v)       e = scalar_sum(e)
         # (vi)      e = e / N
 
-        kush = 1e-10                                                 # γ
+        kush = 1e-7                                                  # γ
         C = yHat.shape[1]                                            # number of classes
         N = len(y)                                                   # batch size
 
         # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
         VP = torch.ones_like(yHat) * self.psi                        # VP: virtual distribution except for yHat
-        norm = yHat + VP * self.K
-        e = (yHat / norm) * torch.log((yHat / norm))
-        e += ((VP / norm) * torch.log((VP / norm))) * self.K
+        norm = yHat + VP * self.K + kush
+        e = (yHat / norm) * torch.log((yHat / norm) + kush)
+        e += ((VP / norm) * torch.log((VP / norm) + kush)) * self.K
 
         # For (iii)
         yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
