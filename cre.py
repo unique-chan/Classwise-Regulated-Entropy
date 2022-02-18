@@ -17,32 +17,25 @@ class CRE(nn.Module):
         # (ii)      e += - K * ( (ψ / norm) log (ψ / norm) )
         # (iii)     e = e ⊙ yHat_zerohot (To ignore all ground truth classes)
         # (iv)      e = e ⊙ (yHat + γ) (⊙: Hadamard Product)
-        # (v)       e = scalar_sum(e)
-        # (vi)      e = e / N
-
+        # (v)       e = scalar_sum(e) / (N * C)
         kush = 1e-7                                                  # γ
         C = yHat.shape[1]                                            # number of classes
         N = len(y)                                                   # batch size
-
         # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
-        VP = torch.ones_like(yHat) * self.psi                        # VP: virtual distribution except for yHat
-        norm = yHat + VP * self.K + kush
-        e = (yHat / norm) * torch.log((yHat / norm) + kush)
+        yHat_mul_K = self.K * yHat
+        VP = torch.ones_like(yHat) * self.psi                        # virtual distribution except for yHat
+        norm = yHat_mul_K + VP * self.K + kush
+        e = (yHat_mul_K / norm) * torch.log((yHat_mul_K / norm) + kush)
         e += ((VP / norm) * torch.log((VP / norm) + kush)) * self.K
-
         # For (iii)
         yHat_zerohot = torch.ones(N, C).scatter_(1, y.view(N, 1).data.cpu(), 0)
         e *= yHat_zerohot.to(device=self.device)
         e = torch.sum(e, dim=1)
-
         # For (iv)
         yHat_gt = yHat.data * F.one_hot(y, C)
         yHat_gt = yHat_gt.data.max(dim=1).values
         e *= (yHat_gt + kush)
-
-        # For (v), (vi)
-        e = float(torch.sum(e))
-        e /= N
-
+        # For (v)
+        e = float(torch.sum(e)) / (N * C)
         return e
