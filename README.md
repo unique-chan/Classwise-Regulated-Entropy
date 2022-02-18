@@ -23,9 +23,9 @@ torchvision
 class CRE(nn.Module):
     def __init__(self, K, device, psi=1e-7):
         assert K > 0 and type(K) is int, 'Hyper-parameter "K" should be a integer (> 0).'
-        self.K = K                                                   # K
-        self.psi = psi                                               # ψ
-        self.device = device                                         # {'cpu', 'cuda:0', 'cuda:1', ...}
+        self.K = K                                  # K
+        self.psi = psi                              # ψ
+        self.device = device                        # {'cpu', 'cuda:0', 'cuda:1', ...}
         super(CRE, self).__init__()
 
     def forward(self, yHat, y):
@@ -35,13 +35,13 @@ class CRE(nn.Module):
         # (iii)     e = e ⊙ yHat_zerohot (To ignore all ground truth classes)
         # (iv)      e = e ⊙ (yHat + γ) (⊙: Hadamard Product)
         # (v)       e = scalar_sum(e) / (N * C)
-        kush = 1e-7                                                  # γ
-        C = yHat.shape[1]                                            # number of classes
-        N = len(y)                                                   # batch size
+        kush = 1e-7                                 # γ
+        C = yHat.shape[1]                           # number of classes
+        N = len(y)                                  # batch size
         # For (i), (ii)
         yHat = F.softmax(yHat, dim=1)
         yHat_mul_K = self.K * yHat
-        VP = torch.ones_like(yHat) * self.psi                        # virtual distribution except for yHat
+        VP = torch.ones_like(yHat) * self.psi       # virtual distribution except for yHat
         norm = yHat_mul_K + VP * self.K + kush
         e = (yHat_mul_K / norm) * torch.log((yHat_mul_K / norm) + kush)
         e += ((VP / norm) * torch.log((VP / norm) + kush)) * self.K
